@@ -1,0 +1,77 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1184px;
+  height: 48px;
+  margin: 20px auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #121417;
+  font-family: 'Helvetica Neue', 'Roboto', 'Verdana', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.linkHome,.linkTeachers {
+  text-decoration: none;
+  color: #121417;
+  font-family: 'Helvetica Neue', 'Roboto', 'Verdana', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+  transition: 0.3s; 
+}
+
+.linkHome:hover,.linkTeachers:hover
+{
+transform: rotate(3deg) translate(5px);
+}
+.authBlock {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.loginButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #121417;
+  font-family: 'Helvetica Neue', 'Roboto', 'Verdana', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.regButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 166px;
+  height: 48px;
+  background-color: #121417;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Helvetica Neue', 'Roboto', 'Verdana', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
