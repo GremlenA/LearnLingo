@@ -6,6 +6,7 @@ import { registerSchema } from "../../schemas/authSchemas";
 import { auth, db } from "../../firebase/getFirestore";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import toast, { Toaster } from 'react-hot-toast';
 
 
 interface RegisterProps {
@@ -79,9 +80,32 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
 
       // 4. Закрываем окно
       closeModal();
-      console.log("Регистрация успешна и данные сохранены в БД!");
+      toast.success(`Вітаємо, ${data.name}! Реєстрація успішна.`);
     } catch (error: any) {
-      console.error("Ошибка при регистрации:", error.message);
+      // Создаем переменную для нашего красивого сообщения
+      let customErrorMessage = "Сталася невідома помилка. Спробуйте пізніше.";
+
+      // Проверяем код ошибки от Firebase и меняем текст
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          customErrorMessage = "Користувач з таким email вже існує!";
+          break;
+        case "auth/invalid-email":
+          customErrorMessage = "Невірний формат email адреси.";
+          break;
+        case "auth/weak-password":
+          customErrorMessage = "Пароль занадто простий. Мінімум 6 символів.";
+          break;
+        case "auth/network-request-failed":
+          customErrorMessage = "Помилка мережі. Перевірте інтернет-з'єднання.";
+          break;
+        default:
+          // Если код ошибки нам неизвестен, выводим стандартное сообщение Firebase
+          customErrorMessage = error.message;
+      }
+
+      // Передаем в тост нашу красивую переменную
+      toast.error(customErrorMessage);
     }
   };
 

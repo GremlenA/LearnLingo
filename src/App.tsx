@@ -6,6 +6,7 @@ import { FavoritesPage } from './pages/Favorite/FavoritesPage.tsx';
 import { Header } from './components/Header/Header.tsx';
 import { Login } from "./components/Modals/LoginModal.tsx";
 import { Register } from './components/Modals/Register.Modal.tsx';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
 
@@ -25,7 +26,7 @@ function App() {
       {isLoginOpen && (
         <Login closeModal={() => setIsLoginOpen(false)} />
       )}
-
+       <Toaster position="top-right" />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
