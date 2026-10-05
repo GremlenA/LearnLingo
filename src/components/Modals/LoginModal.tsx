@@ -3,6 +3,10 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import css from './Login.module.css';
 import { loginSchema } from "../../schemas/authSchemas"; 
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import toast from 'react-hot-toast';
+import { auth, db, googleProvider,facebookProvider } from "../../firebase/getFirestore";
 
 interface LoginProps {
   closeModal: () => void;
@@ -47,10 +51,96 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
     resolver: yupResolver(loginSchema) 
   });
 
-  const onSubmit: SubmitHandler<IForm> = (data) => {
-    console.log("Успешно!", data);
-  };
+  const onSubmit: SubmitHandler<IForm> = async(data) => {
+     try {
+        const  userCredential  = await signInWithEmailAndPassword(
+          auth,
+          data.email,
+          data.password
+        );
+        closeModal();
+       toast.success(`Вітаємо, ${data.email}! Авторизація успішна.`);
+     } catch(error:any) {
+       let customErrorMessage = "Сталася невідома помилка. Спробуйте пізніше.";
+       switch (error.code) {
+      case "auth/user-not-found":
+        customErrorMessage = "Користувача з таким email не знайдено.";
+        break;
+      case "auth/wrong-password":
+        customErrorMessage = "Невірний пароль.";
+        break;
+      case "auth/invalid-credential":
+        customErrorMessage = "Невірний email або пароль.";
+        break;
+      case "auth/network-request-failed":
+        customErrorMessage = "Помилка мережі. Перевірте інтернет-з'єднання.";
+        break;
+      default:
+        customErrorMessage = error.message;
+      }
+      toast.error(customErrorMessage);
+     }
+  }; 
 
+  
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          name: user.displayName || "Google User",
+          email: user.email,
+          favorites: []
+        });
+      }
+
+      closeModal(); 
+      toast.success(`Вітаємо, ${user.displayName || user.email}! Успішний вхід.`);
+      
+    } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error("Ви закрили вікно авторизації.");
+      } else {
+        toast.error("Помилка авторизації: " + error.message);
+      }
+    }
+  };
+    const handleFaceBookSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          name: user.displayName || "Facebook User",
+          email: user.email || "", 
+          favorites: []
+        });
+      }
+
+      closeModal(); 
+      
+      toast.success(`Вітаємо, ${user.displayName || "Користувач"}! Успішний вхід.`);
+      
+    } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.error("Ви закрили вікно авторизації.");
+      } else if (error.code === 'auth/account-exists-with-different-credential') {
+        // Та самая частая ошибка Facebook + Google
+        toast.error("Акаунт з таким email вже існує. Увійдіть через Google або пошту.");
+      } else {
+        toast.error("Помилка авторизації: " + error.message);
+      }
+    }
+       }; 
   return (
     <div className={css.backdrop} onClick={closeModal}>
       <div className={css.popUp} onClick={(e) => e.stopPropagation()}>
@@ -88,6 +178,14 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
           >
             <span className={css.buttonText}>Log In</span>
           </button>
+
+          <button type="button" className={css.gmailButton} onClick={handleGoogleSignIn}>
+              <img src="./icon-gmail.svg" alt="Google" width={25} height={25} />
+              </button>
+
+              <button type="button" className={css.faceButton} onClick={handleFaceBookSignIn}>
+              <img src="./icon-facebook.svg" alt="Facebook" width={25} height={25} />
+              </button>
         </form>
       </div>
     </div>

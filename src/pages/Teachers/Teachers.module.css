@@ -1,0 +1,24 @@
+/* Выстраиваем все три фильтра в один горизонтальный ряд */
+.filterGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 20px; 
+  align-items: flex-start; 
+  margin-bottom: 32px;
+  margin-left: 128px;
+}
+
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  color: #8A8A89;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  font-family: 'Roboto', 'Verdana', sans-serif;
+  margin-bottom: 8px; /* Отступ от текста до выпадающего списка */
+}
