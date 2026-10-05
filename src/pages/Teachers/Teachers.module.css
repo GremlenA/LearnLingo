@@ -1,17 +1,17 @@
-/* Выстраиваем все три фильтра в один горизонтальный ряд */
+/* Контейнер для всех фильтров */
 .filterGroup {
   display: flex;
   flex-direction: row;
-  gap: 20px; 
-  align-items: flex-start; 
-  margin-bottom: 32px;
-  margin-left: 128px;
+  gap: 20px;
+  align-items: flex-start;
+  padding-left: 96px;
 }
 
-
+/* Обертка для одного фильтра (ВАЖНО: position: relative для меню) */
 .filterItem {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .label {
@@ -20,5 +20,78 @@
   font-weight: 500;
   line-height: 18px;
   font-family: 'Roboto', 'Verdana', sans-serif;
-  margin-bottom: 8px; /* Отступ от текста до выпадающего списка */
+  margin-bottom: 8px;
+}
+
+/* Главная кнопка-плашка */
+.selectButton {
+  appearance: none;
+  background-color: #FFFFFF;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 48px 14px 18px; /* 48px справа для стрелки */
+  cursor: pointer;
+  font-family: 'Roboto', 'Verdana', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #121417;
+  text-align: left;
+  min-width: 150px;
+}
+
+/* Добавляем стрелочку через псевдоэлемент */
+.selectButton::after {
+  content: '';
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23121417' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease; /* Плавная анимация поворота */
+}
+
+/* Поворот стрелки при открытом меню */
+.selectButtonOpen::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Само выпадающее окошко */
+.dropdownList {
+  position: absolute;
+  top: calc(100% + 4px); /* Отступ от кнопки вниз */
+  left: 0;
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  box-shadow: 0px 4px 36px rgba(0, 0, 0, 0.08); /* Тень как на макете */
+}
+
+/* Элемент списка (серый цвет) */
+.option {
+  font-family: 'Roboto', 'Verdana', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: rgba(18, 20, 23, 0.4);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* Элемент при наведении */
+.option:hover {
+  color: #121417;
+}
+
+/* Активный/выбранный элемент списка (черный цвет) */
+.activeOption {
+  color: #121417;
 }

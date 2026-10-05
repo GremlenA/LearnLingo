@@ -1,47 +1,87 @@
-import css from "./Teachers.module.css"
+import { useState, useRef, useEffect } from "react";
+import css from "./Teachers.module.css";
 
+// Переиспользуемый компонент кастомного селекта
+const CustomSelect = ({ label, options, value, onChange }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef<HTMLDivElement>(null);
+
+  // Закрытие списка при клике вне его области
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelect = (option: string) => {
+    onChange(option);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className={css.filterItem} ref={selectRef}>
+      <label className={css.label}>{label}</label>
+      
+      {/* Кнопка открытия/закрытия */}
+      <button
+        type="button"
+        className={`${css.selectButton} ${isOpen ? css.selectButtonOpen : ""}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {value}
+      </button>
+
+      {/* Выпадающий список */}
+      {isOpen && (
+        <ul className={css.dropdownList}>
+          {options.map((option: string) => (
+            <li
+              key={option}
+              className={`${css.option} ${value === option ? css.activeOption : ""}`}
+              onClick={() => handleSelect(option)}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+// Главная страница
 export const TeachersPage = () => {
+  // Состояния для хранения выбранных значений
+  const [language, setLanguage] = useState("French");
+  const [level, setLevel] = useState("A1 Beginner");
+  const [price, setPrice] = useState("30 $");
+
   return (
     <div className={css.filterGroup}>
-      {/* Первый блок: Языки */}
-      <div className={css.filterItem}>
-        <label htmlFor="language-select" className={css.label}>
-          Languages
-        </label>
-        <select id="language-select" className={css.navBar} defaultValue="French">
-          <option value='French'>French</option>
-          <option value='English'>English</option>
-          <option value='Ukrainian'>Ukrainian</option>
-          <option value='German'>German</option>
-          <option value='Polish'>Polish</option>
-        </select>
-      </div>
+      <CustomSelect
+        label="Languages"
+        options={['French', 'English', 'Ukrainian', 'German', 'Polish']}
+        value={language}
+        onChange={setLanguage}
+      />
 
-      {/* Второй блок: Уровень */}
-      <div className={css.filterItem}>
-        <label htmlFor="Level-select" className={css.label}>
-          Level of knowledge
-        </label>
-        <select id="Level-select" className={css.navBar} defaultValue="A1 Beginner">
-          <option value='A1 Beginner'>A1 Beginner</option>
-          <option value='A2 Elementary'>A2 Elementary</option>
-          <option value='B1 Intermediate'>B1 Intermediate</option>
-          <option value='B2 Upper-Intermediate'>B2 Upper-Intermediate</option>
-        </select>
-      </div>
+      <CustomSelect
+        label="Level of knowledge"
+        options={['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate']}
+        value={level}
+        onChange={setLevel}
+      />
 
-      {/* Третий блок: Цена */}
-      <div className={css.filterItem}>
-        <label htmlFor="price-select" className={css.label}>
-          Price
-        </label>
-        <select id="price-select" className={css.navBar} defaultValue="30">
-          <option value='10'>10 $</option>
-          <option value='20'>20 $</option>
-          <option value='30'>30 $</option>
-          <option value='40'>40 $</option>
-        </select>
-      </div>
+      <CustomSelect
+        label="Price"
+        options={['10 $', '20$', '30 $', '40$']}
+        value={price}
+        onChange={setPrice}
+      />
     </div>
   );
 };
