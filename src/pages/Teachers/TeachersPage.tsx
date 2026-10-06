@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase/getFirestore";
 import css from "./Teachers.module.css";
+import { TeacherCard } from "../../components/TeacherCard/TeacherCard";
 
-// Переиспользуемый компонент кастомного селекта
 const CustomSelect = ({ label, options, value, onChange }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
 
-  // Закрытие списка при клике вне его области
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
@@ -26,16 +27,14 @@ const CustomSelect = ({ label, options, value, onChange }: any) => {
     <div className={css.filterItem} ref={selectRef}>
       <label className={css.label}>{label}</label>
       
-      {/* Кнопка открытия/закрытия */}
       <button
         type="button"
         className={`${css.selectButton} ${isOpen ? css.selectButtonOpen : ""}`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        {value}
+        {value === "" ? " " : value}
       </button>
 
-      {/* Выпадающий список */}
       {isOpen && (
         <ul className={css.dropdownList}>
           {options.map((option: string) => (
@@ -53,35 +52,116 @@ const CustomSelect = ({ label, options, value, onChange }: any) => {
   );
 };
 
-// Главная страница
 export const TeachersPage = () => {
-  // Состояния для хранения выбранных значений
-  const [language, setLanguage] = useState("French");
-  const [level, setLevel] = useState("A1 Beginner");
-  const [price, setPrice] = useState("30 $");
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [language, setLanguage] = useState("");
+  const [level, setLevel] = useState("");
+  const [price, setPrice] = useState("");
 
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [language, level, price]);
+
+  useEffect(() => {
+    const getTeachersData = async () => {
+      try {
+        const teachersRef = collection(db, "teachers");
+        const querySnapshot = await getDocs(teachersRef);
+        const tacherArray: any[] = [];
+
+        querySnapshot.forEach((doc) => {
+          tacherArray.push({ id: doc.id, ...doc.data() });
+        });
+        setTeachers(tacherArray);
+      } catch (error) {
+        console.error("Ошибка загрузки:", error);
+      }
+    };
+    getTeachersData();
+  }, []);
+
+  // Логика фильтрации
+  const filteredTeachers = teachers.filter((teacher) => {
+    const isLanguageMatch = language === "" ? true : teacher.languages.includes(language);
+    const isLevelMatch = level === "" ? true : teacher.levels.includes(level);
+    const isPriceMatch = price === "" ? true : `${teacher.price_per_hour} $` === price;
+
+    return isLanguageMatch && isLevelMatch && isPriceMatch;
+    const filteredTeachers = teachers.filter((teacher) => {
+    const isLanguageMatch = language === "" ? true : teacher.languages.includes(language);
+    const isLevelMatch = level === "" ? true : teacher.levels.includes(level);
+    const isPriceMatch = price === "" ? true : `${teacher.price_per_hour} $` === price;
+
+    return isLanguageMatch && isLevelMatch && isPriceMatch;
+  });
+
+  });
+  const paginatedTeachers = filteredTeachers.slice(0, visibleCount);
   return (
-    <div className={css.filterGroup}>
-      <CustomSelect
-        label="Languages"
-        options={['French', 'English', 'Ukrainian', 'German', 'Polish']}
-        value={language}
-        onChange={setLanguage}
-      />
+    <div className={css.pageContainer}>
+      
+      <div className={css.filterGroup}>
+        <CustomSelect
+          label="Languages"
+          options={['French', 'English', 'Ukrainian', 'German', 'Polish']}
+          value={language}
+          onChange={setLanguage}
+        />
 
-      <CustomSelect
-        label="Level of knowledge"
-        options={['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate']}
-        value={level}
-        onChange={setLevel}
-      />
+        <CustomSelect
+          label="Level of knowledge"
+          options={['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate']}
+          value={level}
+          onChange={setLevel}
+        />
 
-      <CustomSelect
-        label="Price"
-        options={['10 $', '20$', '30 $', '40$']}
-        value={price}
-        onChange={setPrice}
-      />
+        <CustomSelect
+          label="Price"
+          options={['10 $', '20$', '30 $', '40$']} // Добавлены пробелы для корректного сравнения
+          value={price}
+          onChange={setPrice}
+        />
+
+        <button 
+          className={css.resetButton}
+          onClick={() => {
+            setLanguage("");
+            setLevel("");
+            setPrice("");
+          }}
+        >
+          Reset filters
+        </button>
+      </div>
+
+      <div className={css.cardsList}>
+        
+        {/* НОВОЕ: Если массив пустой, показываем сообщение */}
+        {paginatedTeachers.length === 0 && (
+          <p className={css.noResults}>
+            No teachers found for your filters. Try changing the criteria.
+          </p>
+        )}
+
+        {/* Твой рабочий код */}
+        {paginatedTeachers.map((teacher) => (
+          <TeacherCard 
+            key={teacher.id} 
+            {...teacher} 
+          />
+        ))}
+
+        {visibleCount < filteredTeachers.length && (
+          <button 
+            className={css.loadMoreBtn} 
+            onClick={() => setVisibleCount((prev) => prev + 10)}
+          >
+            Load more
+          </button>
+        )}
+      </div>
+
     </div>
   );
 };
