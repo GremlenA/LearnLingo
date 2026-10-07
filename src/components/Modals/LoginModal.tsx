@@ -6,7 +6,12 @@ import { loginSchema } from "../../schemas/authSchemas";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import toast from 'react-hot-toast';
-import { auth, db, googleProvider,facebookProvider } from "../../firebase/getFirestore";
+import { auth, db, googleProvider, facebookProvider } from "../../firebase/getFirestore";
+
+// Добавляем импорты картинок из папки src/assets/images
+import closeImg from "../../assets/images/close.svg";
+import gmailImg from "../../assets/images/icon-gmail.svg";
+import facebookImg from "../../assets/images/icon-facebook.svg";
 
 interface LoginProps {
   closeModal: () => void;
@@ -53,13 +58,13 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
 
   const onSubmit: SubmitHandler<IForm> = async(data) => {
      try {
-        const  userCredential  = await signInWithEmailAndPassword(
+        await signInWithEmailAndPassword(
           auth,
           data.email,
           data.password
         );
         closeModal();
-       toast.success(`Вітаємо, ${data.email}! Авторизація успішна.`);
+        toast.success(`Вітаємо, ${data.email}! Авторизація успішна.`);
      } catch(error:any) {
        let customErrorMessage = "Сталася невідома помилка. Спробуйте пізніше.";
        switch (error.code) {
@@ -110,7 +115,8 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
       }
     }
   };
-    const handleFaceBookSignIn = async () => {
+
+  const handleFaceBookSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
       const user = result.user;
@@ -134,19 +140,20 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
       if (error.code === 'auth/popup-closed-by-user') {
         toast.error("Ви закрили вікно авторизації.");
       } else if (error.code === 'auth/account-exists-with-different-credential') {
-        // Та самая частая ошибка Facebook + Google
         toast.error("Акаунт з таким email вже існує. Увійдіть через Google або пошту.");
       } else {
         toast.error("Помилка авторизації: " + error.message);
       }
     }
-       }; 
+  }; 
+
   return (
     <div className={css.backdrop} onClick={closeModal}>
       <div className={css.popUp} onClick={(e) => e.stopPropagation()}>
         
         <button type="button" className={css.closeButton} onClick={closeModal}>
-            <img src="./close.svg" alt="Close" />
+            {/* Используем импортированную переменную */}
+            <img src={closeImg} alt="Close" />
         </button>
 
         <h2 className={css.loginH2}>Log In</h2>
@@ -180,12 +187,14 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
           </button>
 
           <button type="button" className={css.gmailButton} onClick={handleGoogleSignIn}>
-              <img src="./icon-gmail.svg" alt="Google" width={25} height={25} />
-              </button>
+              {/* Используем импортированную переменную */}
+              <img src={gmailImg} alt="Google" width={25} height={25} />
+          </button>
 
-              <button type="button" className={css.faceButton} onClick={handleFaceBookSignIn}>
-              <img src="./icon-facebook.svg" alt="Facebook" width={25} height={25} />
-              </button>
+          <button type="button" className={css.faceButton} onClick={handleFaceBookSignIn}>
+              {/* Используем импортированную переменную */}
+              <img src={facebookImg} alt="Facebook" width={25} height={25} />
+          </button>
         </form>
       </div>
     </div>

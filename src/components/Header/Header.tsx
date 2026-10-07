@@ -1,10 +1,9 @@
 import React from 'react';
-// 1. Добавляем useNavigate для редиректа
 import { NavLink, useNavigate } from 'react-router-dom';
 import css from "./Header.module.css";
-import LoginIcon from "../../../public/log-in-01.svg";
+import LoginIcon from "../../assets/images/log-in-01.svg";
+import ukraineImg from "../../assets/images/ukraine.svg";
 import { useAuthStore } from '../../store/authStore';
-// 2. Импортируем функцию выхода и объект auth
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase/getFirestore'; // Убедись, что путь правильный!
 import toast from 'react-hot-toast'; // Для красивого уведомления о выходе
@@ -35,8 +34,8 @@ export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
       <div className={css.container}>
         
         <NavLink to="/" className={css.logo}>
-          <img src="/ukraine.svg" alt="Ukraine Logo" width={28} height={28} />
-          <span className={css.logoName}>Learn Lingo</span>
+             <img src={ukraineImg} alt="Ukraine Logo" width={28} height={28} />
+             <span className={css.logoName}>Learn Lingo</span>
         </NavLink>
          
         <nav className={css.navigation}>

@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
-import { useForm,  type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import css from './Register.module.css';
 import { registerSchema } from "../../schemas/authSchemas"; 
 import { auth, db } from "../../firebase/getFirestore";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import toast, { Toaster } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 
+// Импортируем картинку из папки src/assets/images
+import closeImg from "../../assets/images/close.svg";
 
 interface RegisterProps {
   closeModal: () => void;
@@ -55,37 +57,29 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
 
   const onSubmit: SubmitHandler<IForm> = async (data) => {
     try {
-      // 1. Создаем аккаунт в системе авторизации
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
 
-      // 2. Добавляем имя к профилю авторизации
       await updateProfile(userCredential.user, {
         displayName: data.name,
       });
 
-      // 3. НОВОЕ: Создаем документ в базе данных Firestore!
-      // doc() указывает ГДЕ создать: в базе db, в коллекции "users", с названием файла = user.uid
-      // setDoc() указывает ЧТО туда положить (объект с данными)
       await setDoc(doc(db, "users", userCredential.user.uid), {
         uid: userCredential.user.uid,
         name: data.name,
         email: data.email,
-        createdAt: new Date().toISOString(), // Добавляем дату регистрации для порядка
-        favorites: [] // Сразу создаем пустой массив для будущих избранных учителей
+        createdAt: new Date().toISOString(), 
+        favorites: [] 
       });
 
-      // 4. Закрываем окно
       closeModal();
       toast.success(`Вітаємо, ${data.name}! Реєстрація успішна.`);
     } catch (error: any) {
-      // Создаем переменную для нашего красивого сообщения
       let customErrorMessage = "Сталася невідома помилка. Спробуйте пізніше.";
 
-      // Проверяем код ошибки от Firebase и меняем текст
       switch (error.code) {
         case "auth/email-already-in-use":
           customErrorMessage = "Користувач з таким email вже існує!";
@@ -100,11 +94,9 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
           customErrorMessage = "Помилка мережі. Перевірте інтернет-з'єднання.";
           break;
         default:
-          // Если код ошибки нам неизвестен, выводим стандартное сообщение Firebase
           customErrorMessage = error.message;
       }
 
-      // Передаем в тост нашу красивую переменную
       toast.error(customErrorMessage);
     }
   };
@@ -114,7 +106,8 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
       <div className={css.popUp} onClick={(e) => e.stopPropagation()}>
         
         <button type="button" className={css.closeButton} onClick={closeModal}>
-            <img src="./close.svg" alt="Close" />
+            {/* Используем импортированную переменную */}
+            <img src={closeImg} alt="Close" />
         </button>
 
         <h2 className={css.registerH2}>Registration</h2>
@@ -125,11 +118,13 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
         <form className={css.inputs} onSubmit={handleSubmit(onSubmit)}>
             <input 
             className={css.inputField}
-            type="name" 
+            type="text" // Заменил type="name" на type="text", так как типа name не существует в HTML
             placeholder="Name" 
             {...register('name')} 
           />
-          {errors.email && <p className={css.errorText}>{errors.email.message}</p>}
+          {/* Исправил ошибку: здесь выводилась ошибка email вместо name */}
+          {errors.name && <p className={css.errorText}>{errors.name.message}</p>}
+          
           <input 
             className={css.inputField}
             type="email" 
