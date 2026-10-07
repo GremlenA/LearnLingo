@@ -88,16 +88,10 @@ export const TeachersPage = () => {
     const isPriceMatch = price === "" ? true : `${teacher.price_per_hour} $` === price;
 
     return isLanguageMatch && isLevelMatch && isPriceMatch;
-    const filteredTeachers = teachers.filter((teacher) => {
-    const isLanguageMatch = language === "" ? true : teacher.languages.includes(language);
-    const isLevelMatch = level === "" ? true : teacher.levels.includes(level);
-    const isPriceMatch = price === "" ? true : `${teacher.price_per_hour} $` === price;
-
-    return isLanguageMatch && isLevelMatch && isPriceMatch;
   });
 
-  });
   const paginatedTeachers = filteredTeachers.slice(0, visibleCount);
+
   return (
     <div className={css.pageContainer}>
       
@@ -118,7 +112,7 @@ export const TeachersPage = () => {
 
         <CustomSelect
           label="Price"
-          options={['10 $', '20$', '30 $', '40$']} // Добавлены пробелы для корректного сравнения
+          options={['10 $', '20$', '30 $', '40$']}
           value={price}
           onChange={setPrice}
         />
@@ -137,14 +131,14 @@ export const TeachersPage = () => {
 
       <div className={css.cardsList}>
         
-        {/* НОВОЕ: Если массив пустой, показываем сообщение */}
+        {/* Сообщение при пустом результате фильтрации */}
         {paginatedTeachers.length === 0 && (
           <p className={css.noResults}>
             No teachers found for your filters. Try changing the criteria.
           </p>
         )}
 
-        {/* Твой рабочий код */}
+        {/* Вывод карточек */}
         {paginatedTeachers.map((teacher) => (
           <TeacherCard 
             key={teacher.id} 
@@ -152,6 +146,7 @@ export const TeachersPage = () => {
           />
         ))}
 
+        {/* Кнопка загрузки дополнительных карточек */}
         {visibleCount < filteredTeachers.length && (
           <button 
             className={css.loadMoreBtn} 
