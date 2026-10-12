@@ -108,17 +108,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 32px; /* Отступ от кнопки "Read more" или текста опыта */
+  margin-top: 16px;
 }
 
 .levelTag {
   padding: 8px 12px;
   border-radius: 35px;
   border: 1px solid rgba(18, 20, 23, 0.2);
-  font-family: 'Roboto', 'Verdana', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #121417;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto', 'Verdana', sans-serif;
 }
 
 /* Общий контейнер шапки */
@@ -205,4 +209,30 @@
   font-weight: 500;
   color: #121417;
   margin: 0; /* Отступы теперь контролируются через gap в .header */
+}
+
+/* Контейнер для тегов */
+.levelsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Расстояние между тегами */
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+}
+
+/* Базовый стиль одного тега */
+.levelItem {
+  padding: 8px 12px;
+  border-radius: 35px; /* Сильное закругление */
+  border: 1px solid rgba(18, 20, 23, 0.2); /* Светло-серая рамка */
+  font-size: 14px;
+  font-weight: 500;
+  color: #121417;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.levelTag.activeLevel {
+  background-color: #F4C550; /* Желтый цвет */
+  border-color: #F4C550; /* Убираем рамку */
 }

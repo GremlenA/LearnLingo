@@ -3,10 +3,11 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import css from "./Header.module.css";
 import LoginIcon from "../../assets/images/log-in-01.svg";
 import ukraineImg from "../../assets/images/ukraine.svg";
+import UserIcon from "../../assets/images/UserIcon.svg";
 import { useAuthStore } from '../../store/authStore';
 import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase/getFirestore'; // Убедись, что путь правильный!
-import toast from 'react-hot-toast'; // Для красивого уведомления о выходе
+import { auth } from '../../firebase/getFirestore'; 
+import toast from 'react-hot-toast'; 
 
 interface HeaderProps {
   openLogin: () => void;
@@ -15,15 +16,13 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
   const { user, isAuthLoaded } = useAuthStore();
-  // 3. Инициализируем функцию навигации
   const navigate = useNavigate();
 
-  // 4. Пишем функцию для выхода
   const handleLogOut = async () => {
     try {
-      await signOut(auth); // Разрываем сессию в Firebase
-      toast.success('Ви успішно вийшли з системи'); // Показываем тост
-      navigate('/'); // Перекидываем на главную страницу
+      await signOut(auth); 
+      toast.success('Ви успішно вийшли з системи'); 
+      navigate('/'); 
     } catch (error: any) {
       toast.error('Помилка при виході: ' + error.message);
     }
@@ -34,10 +33,10 @@ export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
       <div className={css.container}>
         
         <NavLink to="/" className={css.logo}>
-             <img src={ukraineImg} alt="Ukraine Logo" width={28} height={28} />
-             <span className={css.logoName}>Learn Lingo</span>
+          <img src={ukraineImg} alt="Ukraine Logo" width={28} height={28} />
+          <span className={css.logoName}>Learn Lingo</span>
         </NavLink>
-         
+          
         <nav className={css.navigation}>
           <NavLink to="/" className={css.linkHome}>Home</NavLink>
           <NavLink to="/teachers" className={css.linkTeachers}>Teachers</NavLink>
@@ -48,9 +47,13 @@ export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
             <span>Завантаження...</span> 
           ) : user ? (
             <>
-              <span className={css.userName}>
-                 Привіт, {user.displayName || user.email}!
-              </span>
+              <NavLink 
+                to="/profile" 
+                className={css.profileLink}
+                title={user.displayName || user.email || "Профіль"}
+              >
+                <img src={UserIcon} alt="User Profile" width={32} height={32} />
+              </NavLink>
           
               <button 
                 type="button" 
@@ -66,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
                 <img src={LoginIcon} alt="Log in" width={20} height={20} />
                 Log in
               </button>
-             
+              
               <button type="button" className={css.regButton} onClick={register}>
                 Register
               </button>

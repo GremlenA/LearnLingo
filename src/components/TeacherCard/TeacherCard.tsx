@@ -1,7 +1,6 @@
 import { useState } from "react";
 import css from "./TeacherCard.module.css";
 
-// 1. Возвращаем интерфейсы, чтобы TypeScript знал структуру наших пропсов
 export interface Review {
   reviewer_name: string;
   reviewer_rating: number;
@@ -21,14 +20,15 @@ export interface TeacherProps {
   lesson_info: string;
   conditions: string[];
   experience: string;
+  selectedLevel?: string;
 }
 
-// 2. Сам компонент карточки
 export const TeacherCard = ({
   name,
   surname,
   languages,
   levels,
+  selectedLevel,
   rating,
   price_per_hour,
   lessons_done,
@@ -48,7 +48,6 @@ export const TeacherCard = ({
           src={avatar_url}
           alt={`${name} ${surname}`}
         />
-        
       </div>
 
       {/* ПРАВАЯ КОЛОНКА (Весь текст) */}
@@ -60,7 +59,7 @@ export const TeacherCard = ({
           {/* Верхняя строка с надписью Languages, статистикой и сердечком */}
           <div className={css.topRow}>
             <span className={css.languagesLabel}>Languages</span>
-
+            
             {/* Блок статистики */}
             <ul className={css.stats}>
               <li className={css.statItem}>
@@ -125,13 +124,22 @@ export const TeacherCard = ({
           </div>
         )}
 
-        {/* Теги уровней */}
+        {/* Теги уровней с подсветкой активного */}
         <div className={css.levelsWrapper}>
-          {levels.map((level) => (
-            <span key={level} className={css.levelTag}>
-              #{level}
-            </span>
-          ))}
+          {levels.map((level) => {
+            // Проверяем, совпадает ли этот уровень с тем, что выбран в фильтре
+            const isActive = level === selectedLevel;
+
+            return (
+              <span 
+                key={level} 
+                // Применяем желтый класс activeLevel, если уровень совпал
+                className={`${css.levelTag} ${isActive ? css.activeLevel : ""}`}
+              >
+                #{level}
+              </span>
+            );
+          })}
         </div>
 
       </div>

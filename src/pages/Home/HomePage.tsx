@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 import css from "./Home.module.css";
-
-// Импортируем картинки из папки src/assets/images
 import capImg from "../../assets/images/cap.svg";
 import appleImg from "../../assets/images/apple.svg";
 import peopleImg from "../../assets/images/people.svg";

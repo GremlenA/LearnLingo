@@ -143,6 +143,7 @@ export const TeachersPage = () => {
           <TeacherCard 
             key={teacher.id} 
             {...teacher} 
+            selectedLevel={level}
           />
         ))}
 
