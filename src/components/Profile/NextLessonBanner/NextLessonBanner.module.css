@@ -1,0 +1,137 @@
+/* Главная жёлтая карточка */
+.bannerWrapper {
+  background-color: #FBE9BA; /* Мягкий жёлтый цвет фона */
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1; /* Чтобы баннер занял всё оставшееся место рядом с UserInfoCard */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* Верхняя строка с белыми плашками */
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Общий стиль для белых плашек */
+.statusBadge,
+.typeBadge {
+  background-color: #ffffff;
+  color: #121417;
+  padding: 8px 16px;
+  border-radius: 35px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Зелёная точка внутри статуса */
+.greenDot {
+  width: 8px;
+  height: 8px;
+  background-color: #38CD3E;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Нижняя строка: Аватар, текст и кнопки */
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Раскидываем инфо и кнопки по краям */
+  flex-wrap: wrap; /* Если экран узкий, кнопки перенесутся вниз */
+  gap: 20px;
+}
+
+/* Блок преподавателя (Аватар + Текст) */
+.teacherInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Аватар преподавателя */
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Текстовый блок преподавателя */
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.textBlock h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #121417;
+}
+
+.subject {
+  margin: 0;
+  font-size: 14px;
+  color: #121417;
+  font-weight: 500;
+}
+
+.time {
+  margin: 0;
+  font-size: 14px;
+  color: #8A8A89;
+}
+
+/* Блок с кнопками */
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Кнопка "Join Lesson" */
+.joinBtn {
+  background-color: #F4C550; /* Насыщенный жёлтый */
+  color: #121417;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.joinBtn:hover {
+  background-color: #e0b446;
+}
+
+/* Кнопка "Reschedule" */
+.rescheduleBtn {
+  background-color: #FBF4E4; /* Очень светлый жёлто-бежевый */
+  color: #121417;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.rescheduleBtn:hover {
+  background-color: #f0e6d0;
+}

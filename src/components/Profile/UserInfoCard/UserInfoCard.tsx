@@ -3,6 +3,7 @@ import css from "./UserInfoCard.module.css";
 import { useAuthStore } from '../../../store/authStore';
 import CameraIcon from "../../../assets/images/camera.svg";
 
+
 export const UserInfoCard = () => {
     const { user } = useAuthStore();
     
@@ -55,7 +56,6 @@ export const UserInfoCard = () => {
                <h2 className={css.name}>{userName}</h2>
                <span className={css.roleBadge}>{userRole}</span>
             </div>
-            <p className={css.email}>{userEmail} • GMT+3</p>
             <div className={css.levelBadge}>English • #B2 Upper-Intermediate</div>
             <button type="button" className={css.editBtn}>Edit profile</button>
           </div>
