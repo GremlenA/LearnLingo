@@ -1,0 +1,22 @@
+.pageWrapper
+{
+    width: 100%;
+    min-height: 100vh;
+    background-color:#F8F8F8;
+    padding-top:24px ;
+    padding-bottom:24px ;
+}
+
+.container
+{
+    max-width:1184px;
+    margin:0 auto;
+    padding: 16px;
+}
+
+.topRow
+{
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+}

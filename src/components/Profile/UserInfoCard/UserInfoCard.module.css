@@ -1,0 +1,127 @@
+.cardWrapper {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.avatarWrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+  border: 3px solid #F4C550;
+  object-fit: cover;
+}
+
+.cameraBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.cameraBtn:hover {
+  background-color: #f8f8f8;
+  transform: scale(1.05);
+}
+
+.infoWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.name,
+.nameRow h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #121417;
+  line-height: 1.2;
+}
+
+.roleBadge {
+  background-color: #FBE9BA;
+  color: #121417;
+  border-radius: 35px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.email {
+  margin: 0;
+  font-size: 14px;
+  color: #8A8A89;
+}
+
+.levelBadge {
+  background-color: #FBE9BA;
+  color: #121417;
+  border-radius: 35px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.editBtn {
+  background-color: #F4F4F6;
+  color: #121417;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.editBtn:hover {
+  background-color: #E6E6EA;
+}
+
+.cardWrapper
+{
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+  color: #121417;
+  font-size: 24px;
+}
+.levelBadge
+{
+  font-size:13px;
+}
+
+.editBtn
+{
+  font-size: 14px;
+}

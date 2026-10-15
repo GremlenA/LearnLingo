@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { HomePage } from './pages/Home/HomePage.tsx';
 import { TeachersPage } from './pages/Teachers/TeachersPage.tsx';
-import { FavoritesPage } from './pages/Favorite/FavoritesPage.tsx';
 import { Header } from './components/Header/Header.tsx';
 import { Login } from "./components/Modals/LoginModal.tsx";
+import { ProfilePage } from './pages/Profile/ProfilePage.tsx';
 import { Register } from './components/Modals/Register.Modal.tsx';
 import { Toaster } from 'react-hot-toast';
 import { useAuthStore } from './store/authStore.ts';
@@ -92,7 +92,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/teachers" element={<TeachersPage />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path='/profile' element={<ProfilePage/>}/>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
