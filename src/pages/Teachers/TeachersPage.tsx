@@ -81,11 +81,25 @@ export const TeachersPage = () => {
     getTeachersData();
   }, []);
 
-  // Логика фильтрации
+  // ОБНОВЛЕННАЯ ЛОГИКА ФИЛЬТРАЦИИ
   const filteredTeachers = teachers.filter((teacher) => {
-    const isLanguageMatch = language === "" ? true : teacher.languages.includes(language);
-    const isLevelMatch = level === "" ? true : teacher.levels.includes(level);
-    const isPriceMatch = price === "" ? true : `${teacher.price_per_hour} $` === price;
+    // 1. Поиск языка (игнорирует регистр, например, "english" найдет "English")
+    const isLanguageMatch = language === "" ? true : 
+      (teacher.languages || []).some((lang: string) => 
+        lang.toLowerCase().includes(language.toLowerCase().trim())
+      );
+
+    // 2. Поиск уровня (игнорирует решетки и ищет частичные совпадения)
+    const isLevelMatch = level === "" ? true : 
+      (teacher.levels || []).some((lvl: string) => {
+        const safeLvl = lvl.toLowerCase().replace('#', '').trim();
+        const safeFilter = level.toLowerCase().trim();
+        return safeLvl.includes(safeFilter) || safeFilter.includes(safeLvl);
+      });
+
+    // 3. Поиск цены (удаляет все символы вроде "$" и пробелы, сравнивая только цифры)
+    const isPriceMatch = price === "" ? true : 
+      String(teacher.price_per_hour) === price.replace(/\D/g, '');
 
     return isLanguageMatch && isLevelMatch && isPriceMatch;
   });

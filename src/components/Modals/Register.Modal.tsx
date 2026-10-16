@@ -1,27 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import css from './Register.module.css';
 import { registerSchema } from "../../schemas/authSchemas"; 
-import { auth, db } from "../../firebase/getFirestore";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
-// Импортируем картинку из папки src/assets/images
+// Берем стор
+import { useAuthStore } from '../../store/authStore';
+
 import closeImg from "../../assets/images/close.svg";
 
 interface RegisterProps {
   closeModal: () => void;
 }
 
+// 1. Расширяем интерфейс формы (делаем поля необязательными, так как они нужны только учителю)
 interface IForm {
   email: string;
   password: string;
   name: string;
+  language?: string;
+  level?: string;
+  price?: number;
 }
 
 export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
+  const [selectedRole, setSelectedRole] = useState<'student' | 'teacher'>('student');
+  
+  // Достаем нашу мощную функцию из стора
+  const { registerWithEmail } = useAuthStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,23 +64,17 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
 
   const onSubmit: SubmitHandler<IForm> = async (data) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
+      // 2. Собираем дополнительные данные, если выбрана роль учителя
+      const extraData = selectedRole === 'teacher' 
+        ? { 
+            language: data.language || 'English', 
+            level: data.level || 'B2 Upper-Intermediate',
+            price: data.price || 0
+          } 
+        : {};
 
-      await updateProfile(userCredential.user, {
-        displayName: data.name,
-      });
-
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        uid: userCredential.user.uid,
-        name: data.name,
-        email: data.email,
-        createdAt: new Date().toISOString(), 
-        favorites: [] 
-      });
+      // 3. Передаем extraData пятым аргументом
+      await registerWithEmail(data.email, data.password, selectedRole, data.name, extraData);
 
       closeModal();
       toast.success(`Вітаємо, ${data.name}! Реєстрація успішна.`);
@@ -106,7 +107,6 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
       <div className={css.popUp} onClick={(e) => e.stopPropagation()}>
         
         <button type="button" className={css.closeButton} onClick={closeModal}>
-            {/* Используем импортированную переменную */}
             <img src={closeImg} alt="Close" />
         </button>
 
@@ -115,14 +115,39 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
           Thank you for your interest in our platform! In order to register, we need some information. Please provide us with the following information
         </p>
 
-        <form className={css.inputs} onSubmit={handleSubmit(onSubmit)}>
+        <div className={css.roleSelector}>
+          <label className={`${css.roleLabel} ${selectedRole === 'student' ? css.activeRole : ''}`}>
             <input 
+              type="radio" 
+              name="role" 
+              value="student" 
+              className={css.hiddenRadio}
+              checked={selectedRole === 'student'} 
+              onChange={() => setSelectedRole('student')} 
+            />
+            I am a Student
+          </label>
+          
+          <label className={`${css.roleLabel} ${selectedRole === 'teacher' ? css.activeRole : ''}`}>
+            <input 
+              type="radio" 
+              name="role" 
+              value="teacher" 
+              className={css.hiddenRadio}
+              checked={selectedRole === 'teacher'} 
+              onChange={() => setSelectedRole('teacher')} 
+            />
+            I am a Teacher
+          </label>
+        </div>
+
+        <form className={css.inputs} onSubmit={handleSubmit(onSubmit)}>
+          <input 
             className={css.inputField}
-            type="text" // Заменил type="name" на type="text", так как типа name не существует в HTML
+            type="text" 
             placeholder="Name" 
             {...register('name')} 
           />
-          {/* Исправил ошибку: здесь выводилась ошибка email вместо name */}
           {errors.name && <p className={css.errorText}>{errors.name.message}</p>}
           
           <input 
@@ -141,6 +166,33 @@ export const Register: React.FC<RegisterProps> = ({ closeModal }) => {
           />
           {errors.password && <p className={css.errorText}>{errors.password.message}</p>}
           
+          {/* 4. ДОБАВЛЯЕМ НОВЫЕ ПОЛЯ ТОЛЬКО ДЛЯ УЧИТЕЛЯ */}
+          {selectedRole === 'teacher' && (
+            <div className={css.teacherFieldsContainer}>
+              <h3 className={css.teacherFieldsTitle}>Teacher Details</h3>
+              <div className={css.teacherInputsRow}>
+                <input 
+                  className={`${css.inputField} ${css.halfWidth}`}
+                  type="text" 
+                  placeholder="Language (e.g. English)" 
+                  {...register('language')} 
+                />
+                <input 
+                  className={`${css.inputField} ${css.halfWidth}`}
+                  type="number" 
+                  placeholder="Price/hr ($)" 
+                  {...register('price')} 
+                />
+              </div>
+              <input 
+                className={css.inputField}
+                type="text" 
+                placeholder="Level (e.g. B2 Upper-Intermediate)" 
+                {...register('level')} 
+              />
+            </div>
+          )}
+
           <button 
             type="submit" 
             className={css.buttonRegister}

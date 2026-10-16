@@ -7,32 +7,22 @@ import { Login } from "./components/Modals/LoginModal.tsx";
 import { ProfilePage } from './pages/Profile/ProfilePage.tsx';
 import { Register } from './components/Modals/Register.Modal.tsx';
 import { Toaster } from 'react-hot-toast';
+
+// 1. Импортируем хук стора
 import { useAuthStore } from './store/authStore.ts';
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from './firebase/getFirestore.ts';
+// (Удалили импорты onAuthStateChanged и auth, так как они теперь внутри стора)
 
 function App() {
-
-  const setUser = useAuthStore((state) => state.setUser);
+  // 2. Достаем функцию initAuth вместо setUser
+  const { initAuth } = useAuthStore();
+  
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
-      useEffect(() => {
-    // onAuthStateChanged возвращает функцию "отписки". 
-    // Мы сохраняем её, чтобы React мог правильно "убрать за собой", если компонент демонтируется.
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        // Если пользователь есть, кладем его в Zustand
-        setUser(currentUser);
-      } else {
-        // Если пользователя нет (вышел или не входил), кладем null
-        setUser(null);
-      }
-    });
-
-    // Очистка слушателя при размонтировании (хорошая практика в React)
-    return () => unsubscribe();
-  }, [setUser]); // useEffect выполнится только один раз при монтировании App
+  // 3. Вызываем initAuth при монтировании. Стор сам во всем разберется!
+  useEffect(() => {
+    initAuth();
+  }, [initAuth]);
 
   return (
     <>
@@ -47,47 +37,43 @@ function App() {
       {isLoginOpen && (
         <Login closeModal={() => setIsLoginOpen(false)} />
       )}
-       <Toaster 
-  position="top-right"
-  toastOptions={{
-    // 1. Общие стили для ВСЕХ уведомлений
-    style: {
-      background: '#FCFCFC', // Цвет фона (можешь поставить цвет своих модалок)
-      color: '#121417', // Цвет текста
-      border: '1px solid #103931', // Обводка, если нужна
-      borderRadius: '12px', // Скругление углов
-      padding: '16px 24px', // Внутренние отступы
-      fontSize: '16px', // Размер шрифта
-      fontWeight: '500',
-    },
-    
-    // 2. Специфичные стили для успешных действий (зеленые)
-    success: {
-      style: {
-        background: '#E0F3EC', // Нежно-зеленый фон
-        color: '#103931', // Темно-зеленый текст
-        border: '1px solid #103931',
-      },
-      iconTheme: {
-        primary: '#103931', // Цвет самой галочки
-        secondary: '#E0F3EC', // Цвет фона вокруг галочки
-      },
-    },
-
-    // 3. Специфичные стили для ошибок (красные)
-    error: {
-      style: {
-        background: '#FDECEB', // Нежно-красный фон
-        color: '#D80027', // Темно-красный текст
-        border: '1px solid #D80027',
-      },
-      iconTheme: {
-        primary: '#D80027', // Цвет крестика
-        secondary: '#FDECEB', 
-      },
-    },
-  }} 
-/>
+      
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#FCFCFC', 
+            color: '#121417', 
+            border: '1px solid #103931', 
+            borderRadius: '12px', 
+            padding: '16px 24px', 
+            fontSize: '16px', 
+            fontWeight: '500',
+          },
+          success: {
+            style: {
+              background: '#E0F3EC', 
+              color: '#103931', 
+              border: '1px solid #103931',
+            },
+            iconTheme: {
+              primary: '#103931', 
+              secondary: '#E0F3EC', 
+            },
+          },
+          error: {
+            style: {
+              background: '#FDECEB', 
+              color: '#D80027', 
+              border: '1px solid #D80027',
+            },
+            iconTheme: {
+              primary: '#D80027', 
+              secondary: '#FDECEB', 
+            },
+          },
+        }} 
+      />
 
       <Routes>
         <Route path="/" element={<HomePage />} />

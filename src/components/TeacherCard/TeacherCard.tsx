@@ -125,22 +125,26 @@ export const TeacherCard = ({
         )}
 
         {/* Теги уровней с подсветкой активного */}
-        <div className={css.levelsWrapper}>
-          {levels.map((level) => {
-            // Проверяем, совпадает ли этот уровень с тем, что выбран в фильтре
-            const isActive = level === selectedLevel;
+        <ul className={css.levelsList}>
+  {levels.map((lvl, index) => {
+    // 1. Умная проверка совпадения уровня для подсветки
+    const isActive = selectedLevel && (
+      lvl.toLowerCase().replace('#', '').trim().includes(selectedLevel.toLowerCase().trim()) || 
+      selectedLevel.toLowerCase().trim().includes(lvl.toLowerCase().replace('#', '').trim())
+    );
 
-            return (
-              <span 
-                key={level} 
-                // Применяем желтый класс activeLevel, если уровень совпал
-                className={`${css.levelTag} ${isActive ? css.activeLevel : ""}`}
-              >
-                #{level}
-              </span>
-            );
-          })}
-        </div>
+    return (
+      <li 
+        key={index} 
+        // 2. Если isActive true, добавляем класс активного уровня
+        className={`${css.levelTag} ${isActive ? css.activeLevel : ''}`} 
+      >
+        {/* Убираем решетку из самого текста, если она там есть, и ставим её снаружи, чтобы не было ##A1 */}
+        #{lvl.replace('#', '')}
+      </li>
+    );
+  })}
+</ul>
 
       </div>
     </div>

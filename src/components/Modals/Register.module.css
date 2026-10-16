@@ -129,3 +129,75 @@ margin-bottom: 20px;
 .closeButton:hover svg {
     opacity: 0.7; 
 }
+
+/* Контейнер для переключателей */
+.roleSelector {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Скрываем стандартные кружочки радио-кнопок, но оставляем их для доступности */
+.hiddenRadio {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Базовый стиль для "кнопки" (по сути это label) */
+.roleLabel {
+  flex: 1; /* Чтобы кнопки занимали равное пространство */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(18, 20, 23, 0.1);
+  color: #121417;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  font-family: 'Helvetica Neue', 'Roboto', 'Verdana', sans-serif;
+}
+
+.roleLabel:hover {
+  border-color: #F4C550;
+  background-color: #FBE9BA; /* Легкий желтый при наведении */
+}
+
+/* Стиль для активной (выбранной) кнопки */
+.activeRole {
+  background-color: #F4C550;
+  border-color: #F4C550;
+  font-weight: 600;
+  font-family: 'Helvetica Neue', 'Roboto', 'Verdana', sans-serif;
+}
+
+.teacherFieldsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Расстояние между инпутами, как в основной форме */
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(18, 20, 23, 0.2); /* Легкий разделитель */
+}
+
+.teacherFieldsTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #121417;
+  margin: 0;
+}
+
+.teacherInputsRow {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.halfWidth {
+  flex: 1; /* Инпуты в ряду займут по 50% ширины */
+}

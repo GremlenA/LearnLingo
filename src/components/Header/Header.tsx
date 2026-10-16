@@ -15,7 +15,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
-  const { user, isAuthLoaded } = useAuthStore();
+  // ИСПРАВЛЕНИЕ: Меняем isAuthLoaded на isLoading
+  const { user, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogOut = async () => {
@@ -43,7 +44,8 @@ export const Header: React.FC<HeaderProps> = ({ openLogin, register }) => {
         </nav>
 
         <div className={css.authBlock}>
-          {!isAuthLoaded ? (
+          {/* ИСПРАВЛЕНИЕ: Используем isLoading */}
+          {isLoading ? (
             <span>Завантаження...</span> 
           ) : user ? (
             <>

@@ -3,12 +3,11 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import css from './Login.module.css';
 import { loginSchema } from "../../schemas/authSchemas"; 
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import toast from 'react-hot-toast';
-import { auth, db, googleProvider, facebookProvider } from "../../firebase/getFirestore";
 
-// Добавляем импорты картинок из папки src/assets/images
+// Убрали прямые импорты Firebase, так как теперь всё идет через стор
+import { useAuthStore } from "../../store/authStore";
+
 import closeImg from "../../assets/images/close.svg";
 import gmailImg from "../../assets/images/icon-gmail.svg";
 import facebookImg from "../../assets/images/icon-facebook.svg";
@@ -23,6 +22,8 @@ interface IForm {
 }
 
 export const Login: React.FC<LoginProps> = ({ closeModal }) => {
+  // Достаем функции авторизации из нашего глобального состояния
+  const { loginWithEmail, loginWithGoogle, loginWithFacebook } = useAuthStore();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -58,55 +59,40 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
 
   const onSubmit: SubmitHandler<IForm> = async(data) => {
      try {
-        await signInWithEmailAndPassword(
-          auth,
-          data.email,
-          data.password
-        );
+        // Вызываем логин из стора. Стор сам авторизует юзера и сходит в базу за его ролью.
+        await loginWithEmail(data.email, data.password);
+        
         closeModal();
         toast.success(`Вітаємо, ${data.email}! Авторизація успішна.`);
      } catch(error:any) {
        let customErrorMessage = "Сталася невідома помилка. Спробуйте пізніше.";
        switch (error.code) {
-      case "auth/user-not-found":
-        customErrorMessage = "Користувача з таким email не знайдено.";
-        break;
-      case "auth/wrong-password":
-        customErrorMessage = "Невірний пароль.";
-        break;
-      case "auth/invalid-credential":
-        customErrorMessage = "Невірний email або пароль.";
-        break;
-      case "auth/network-request-failed":
-        customErrorMessage = "Помилка мережі. Перевірте інтернет-з'єднання.";
-        break;
-      default:
-        customErrorMessage = error.message;
-      }
-      toast.error(customErrorMessage);
+         case "auth/user-not-found":
+           customErrorMessage = "Користувача з таким email не знайдено.";
+           break;
+         case "auth/wrong-password":
+           customErrorMessage = "Невірний пароль.";
+           break;
+         case "auth/invalid-credential":
+           customErrorMessage = "Невірний email або пароль.";
+           break;
+         case "auth/network-request-failed":
+           customErrorMessage = "Помилка мережі. Перевірте інтернет-з'єднання.";
+           break;
+         default:
+           customErrorMessage = error.message;
+       }
+       toast.error(customErrorMessage);
      }
   }; 
-
   
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          name: user.displayName || "Google User",
-          email: user.email,
-          favorites: []
-        });
-      }
-
-      closeModal(); 
-      toast.success(`Вітаємо, ${user.displayName || user.email}! Успішний вхід.`);
+      // Передаем 'student' как роль по умолчанию, если юзер логинится гуглом впервые
+      await loginWithGoogle('student');
       
+      closeModal(); 
+      toast.success(`Успішний вхід через Google.`);
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
         toast.error("Ви закрили вікно авторизації.");
@@ -118,24 +104,10 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
 
   const handleFaceBookSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, facebookProvider);
-      const user = result.user;
-
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (!userSnap.exists()) {
-        await setDoc(userRef, {
-          name: user.displayName || "Facebook User",
-          email: user.email || "", 
-          favorites: []
-        });
-      }
-
+      await loginWithFacebook('student');
+      
       closeModal(); 
-      
-      toast.success(`Вітаємо, ${user.displayName || "Користувач"}! Успішний вхід.`);
-      
+      toast.success(`Успішний вхід через Facebook.`);
     } catch (error: any) {
       if (error.code === 'auth/popup-closed-by-user') {
         toast.error("Ви закрили вікно авторизації.");
@@ -152,7 +124,6 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
       <div className={css.popUp} onClick={(e) => e.stopPropagation()}>
         
         <button type="button" className={css.closeButton} onClick={closeModal}>
-            {/* Используем импортированную переменную */}
             <img src={closeImg} alt="Close" />
         </button>
 
@@ -187,12 +158,10 @@ export const Login: React.FC<LoginProps> = ({ closeModal }) => {
           </button>
 
           <button type="button" className={css.gmailButton} onClick={handleGoogleSignIn}>
-              {/* Используем импортированную переменную */}
               <img src={gmailImg} alt="Google" width={25} height={25} />
           </button>
 
           <button type="button" className={css.faceButton} onClick={handleFaceBookSignIn}>
-              {/* Используем импортированную переменную */}
               <img src={facebookImg} alt="Facebook" width={25} height={25} />
           </button>
         </form>

@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
 }
 
 /* Общий стиль для белых плашек */
@@ -29,6 +30,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  
 }
 
 /* Зелёная точка внутри статуса */
@@ -54,6 +56,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
 }
 
 /* Аватар преподавателя */
@@ -70,6 +73,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
 }
 
 .textBlock h3 {
@@ -77,6 +81,7 @@
   font-size: 20px;
   font-weight: 600;
   color: #121417;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
 }
 
 .subject {
@@ -113,6 +118,7 @@
   gap: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
 }
 
 .joinBtn:hover {
@@ -130,6 +136,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-family: 'Roboto', system-ui, -apple-system, sans-serif;
 }
 
 .rescheduleBtn:hover {
