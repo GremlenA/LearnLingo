@@ -236,3 +236,23 @@
   background-color: #F4C550; /* Желтый цвет */
   border-color: #F4C550; /* Убираем рамку */
 }
+
+.bookLessonBtn {
+    font-family: 'Roboto', sans-serif;
+    padding: 14px 48px;
+    background-color: #F4C550;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.56;
+    color: #121417;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    align-self: flex-start;
+    margin-top: 32px;
+  }
+
+  .bookLessonBtn:hover {
+    background-color: #FFDC86;
+  }

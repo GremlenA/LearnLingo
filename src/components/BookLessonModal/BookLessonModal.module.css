@@ -1,0 +1,203 @@
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(18, 20, 23, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .popUp {
+    background: #FFFFFF;
+    border-radius: 30px;
+    padding: 64px;
+    width: 438px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .closeButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+    width: 32px;
+    height: 32px;
+  }
+
+  .closeButton:hover {
+    transform: scale(1.1);
+  }
+
+  .title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 40px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #121417;
+    margin-bottom: 20px;
+    margin-top: 0;
+  }
+
+  .description {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500px;
+    line-height: 1.375;
+    color: rgba(18, 20, 23, 0.8);
+    margin-bottom: 20px;
+  }
+
+  .teacherInfo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .teacherAvatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .teacherLabel {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 500px;
+    line-height: 1.33;
+    color: #8A8A89;
+    margin: 0 0 8px 0;
+  }
+
+  .teacherName {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #121417;
+    margin: 0;
+  }
+
+  .reasonTitle {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: 500px;
+    line-height: 1.17;
+    color: #121417;
+    margin-bottom: 20px;
+    margin-top: 0;
+  }
+
+  .reasonsList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.375;
+    color: #121417;
+    cursor: pointer;
+  }
+
+  .radioInput {
+    display: none;
+  }
+
+  .customRadio {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid rgba(18, 20, 23, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .radioInput:checked + .customRadio {
+    border-color: #F4C550;
+  }
+
+  .radioInput:checked + .customRadio::after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background-color: #F4C550;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .inputField {
+    font-family: 'Roboto', sans-serif;
+    padding: 16px 18px;
+    border: 1px solid rgba(18, 20, 23, 0.1);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .inputField::placeholder {
+    color: #121417;
+    opacity: 1;
+    font-weight: 500;
+  }
+
+  .inputField:focus {
+    border-color: #F4C550;
+  }
+
+  .submitBtn {
+    font-family: 'Roboto', sans-serif;
+    margin-top: 22px;
+    padding: 16px;
+    background-color: #F4C550;
+    border-radius: 12px;
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.56;
+    color: #121417;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 100%;
+  }
+
+  .submitBtn:hover {
+    background-color: #FFDC86;
+  }
