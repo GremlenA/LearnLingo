@@ -10,7 +10,7 @@ import {
   updateProfile 
 } from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase/getFirestore';
 
 interface AuthState {
@@ -25,6 +25,9 @@ interface AuthState {
   loginWithFacebook: (roleForNewUser?: 'student' | 'teacher') => Promise<void>;
   checkUserRole: (uid: string) => Promise<void>;
   initAuth: () => void;
+   addToFavorites: (teacherId: string) => Promise<void>;
+    removeFromFavorites: (teacherId: string) => Promise<void>;
+    checkIfFavorite: (teacherId: string) => boolean;
 }
 
 const auth = getAuth();
@@ -162,5 +165,47 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       set({ isLoading: false }); 
     });
+  },
+   addToFavorites: async (teacherId: string) => {
+    const user = get().user;
+    if (!user) return;
+
+    // обновить Firestore
+    await updateDoc(doc(db, 'users', user.uid), {
+      favorites: arrayUnion(teacherId) // добавит, если нет
+    });
+
+    // обновить локальный стейт
+    const currentData = get().userData;
+    set({
+      userData: {
+        ...currentData,
+        favorites: [...(currentData.favorites || []), teacherId]
+      }
+    });
+  },
+
+  removeFromFavorites: async (teacherId: string) => {
+    const user = get().user;
+    if (!user) return;
+
+    // обновить Firestore
+    await updateDoc(doc(db, 'users', user.uid), {
+      favorites: arrayRemove(teacherId) // удалит
+    });
+
+    // обновить локальный стейт
+    const currentData = get().userData;
+    set({
+      userData: {
+        ...currentData,
+        favorites: currentData.favorites.filter((id: string) => id !== teacherId)
+      }
+    });
+  },
+
+  checkIfFavorite: (teacherId: string) => {
+    const userData = get().userData;
+    return userData?.favorites?.includes(teacherId) || false;
   },
 }));

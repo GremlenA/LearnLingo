@@ -97,9 +97,9 @@ export const TeachersPage = () => {
         return safeLvl.includes(safeFilter) || safeFilter.includes(safeLvl);
       });
 
-    // 3. Поиск цены (удаляет все символы вроде "$" и пробелы, сравнивая только цифры)
+    // 3. ИСПРАВЛЕННЫЙ Поиск цены (Ищет преподавателей, чья цена МЕНЬШЕ ИЛИ РАВНА выбранной в фильтре)
     const isPriceMatch = price === "" ? true : 
-      String(teacher.price_per_hour) === price.replace(/\D/g, '');
+      Number(teacher.price_per_hour) <= Number(price.replace(/\D/g, ''));
 
     return isLanguageMatch && isLevelMatch && isPriceMatch;
   });
