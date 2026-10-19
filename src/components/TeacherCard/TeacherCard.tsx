@@ -2,6 +2,7 @@ import { useState } from "react";
 import css from "./TeacherCard.module.css";
 import { BookLessonModal } from '../BookLessonModal/BookLessonModal';
 import { useAuthStore } from '../../store/authStore';
+import { toast } from "react-hot-toast";
 
 export interface Review {
   reviewer_name: string;
@@ -68,6 +69,14 @@ export const TeacherCard = ({
       console.error("Error toggling favorite:", error);
     }
   };
+  //4. проверка авторизации пользователя для отображения кнопки "Book trial lesson"
+     const handleBooklessons = () =>{
+       if(!user){
+         toast.error('Please log in to book a lesson');
+      return;
+       }
+        setIsModalOpen(true);
+     }
 
   return (
     <div className={css.card}>
@@ -168,7 +177,7 @@ export const TeacherCard = ({
 
         {isExpanded && (
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleBooklessons}
             className={css.bookLessonBtn}
           >
             Book trial lesson

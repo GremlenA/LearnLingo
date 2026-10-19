@@ -10,7 +10,6 @@ import { Toaster } from 'react-hot-toast';
 
 // 1. Импортируем хук стора
 import { useAuthStore } from './store/authStore.ts';
-// (Удалили импорты onAuthStateChanged и auth, так как они теперь внутри стора)
 
 function App() {
   // 2. Достаем функцию initAuth вместо setUser
