@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
   import toast from 'react-hot-toast';
   import css from './BookLessonModal.module.css';
   import closeImg from "../../assets/images/close.svg";
+  import { useAuthStore } from '../../store/authStore';
 
   interface BookLessonProps {
     closeModal: () => void;
@@ -25,6 +26,27 @@ import React, { useEffect, useState } from 'react';
     teacherAvatarUrl
   }) => {
     const [selectedReason, setSelectedReason] = useState<string>('Career and business');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Достаем данные пользователя из стора
+    const { user, userRole } = useAuthStore();
+
+    // Проверка роли и что не бронирует у себя
+    useEffect(() => {
+      // Проверка 1: Учитель не может бронировать уроки
+      if (userRole === 'teacher') {
+        toast.error('Teachers cannot book lessons');
+        closeModal();
+        return;
+      }
+
+      // Проверка 2: Нельзя бронировать урок у самого себя
+      if (user?.uid === teacherId) {
+        toast.error("You can't book a lesson with yourself!");
+        closeModal();
+        return;
+      }
+    }, [userRole, user, teacherId, closeModal]);
 
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,15 +59,30 @@ import React, { useEffect, useState } from 'react';
     const { register, handleSubmit, formState: { errors } } = useForm<IForm>();
 
     const onSubmit: SubmitHandler<IForm> = async (data) => {
-      const bookingData = {
-        ...data,
-        reason: selectedReason,
-        teacherId,
-      };
-      console.log("Данные для бронирования:", bookingData);
+      setIsSubmitting(true);
 
-      closeModal();
-      toast.success('Lesson booked successfully!');
+      try {
+        const bookingData = {
+          ...data,
+          reason: selectedReason,
+          teacherId,
+          userId: user?.uid,
+          createdAt: new Date().toISOString(),
+        };
+
+        console.log("Данные для бронирования:", bookingData);
+
+        // Здесь будет сохранение в Firestore
+        // await saveBookingToFirestore(bookingData);
+
+        toast.success('Lesson booked successfully!');
+        closeModal();
+      } catch (error) {
+        console.error('Error booking lesson:', error);
+        toast.error('Failed to book lesson. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     };
 
     const reasons = [
@@ -65,7 +102,8 @@ import React, { useEffect, useState } from 'react';
 
           <h2 className={css.title}>Book trial lesson</h2>
           <p className={css.description}>
-            Our experienced tutor will assess your current language level, discuss your learning goals, and tailor the lesson to your specific needs.
+            Our experienced tutor will assess your current language level, discuss your learning goals, and tailor the
+  lesson to your specific needs.
           </p>
 
           <div className={css.teacherInfo}>
@@ -95,26 +133,71 @@ import React, { useEffect, useState } from 'react';
           </div>
 
           <form className={css.form} onSubmit={handleSubmit(onSubmit)}>
-            <input
-              className={css.inputField}
-              type="text"
-              placeholder="Full Name"
-              {...register('fullName', { required: true })}
-            />
-            <input
-              className={css.inputField}
-              type="email"
-              placeholder="Email"
-              {...register('email', { required: true })}
-            />
-            <input
-              className={css.inputField}
-              type="tel"
-              placeholder="Phone number"
-              {...register('phone', { required: true })}
-            />
+            <div>
+              <input
+                className={`${css.inputField} ${errors.fullName ? css.inputError : ''}`}
+                type="text"
+                placeholder="Full Name"
+                {...register('fullName', {
+                  required: 'Full name is required',
+                  minLength: {
+                    value: 2,
+                    message: 'Name must be at least 2 characters'
+                  }
+                })}
+              />
+              {errors.fullName && (
+                <span className={css.errorMessage}>{errors.fullName.message}</span>
+              )}
+            </div>
 
-            <button type="submit" className={css.submitBtn}>Book</button>
+            <div>
+              <input
+                className={`${css.inputField} ${errors.email ? css.inputError : ''}`}
+                type="email"
+                placeholder="Email"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email format'
+                  }
+                })}
+              />
+              {errors.email && (
+                <span className={css.errorMessage}>{errors.email.message}</span>
+              )}
+            </div>
+
+            <div>
+              <input
+                className={`${css.inputField} ${errors.phone ? css.inputError : ''}`}
+                type="tel"
+                placeholder="Phone number"
+                {...register('phone', {
+                  required: 'Phone number is required',
+                  pattern: {
+                    value: /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/,
+                    message: 'Invalid phone format'
+                  },
+                  minLength: {
+                    value: 10,
+                    message: 'Phone number must be at least 10 digits'
+                  }
+                })}
+              />
+              {errors.phone && (
+                <span className={css.errorMessage}>{errors.phone.message}</span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className={css.submitBtn}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Booking...' : 'Book'}
+            </button>
           </form>
         </div>
       </div>
