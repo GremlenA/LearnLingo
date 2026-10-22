@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'; 
 import css from "./UserInfoCard.module.css";
-// Импортируем хук для работы с глобальным состоянием
 import { useAuthStore } from '../../../store/authStore';
 import CameraIcon from "../../../assets/images/camera.svg";
 

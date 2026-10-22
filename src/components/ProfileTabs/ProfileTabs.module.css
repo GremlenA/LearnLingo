@@ -1,0 +1,58 @@
+.tabsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+}
+
+.tabsNavigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  background-color: #FFFFFF;
+  border-radius: 30px;
+  overflow-x: auto; /* Позволит скроллить вкладки на мобильных экранах */
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: none;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #121417;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  background-color: rgba(244, 197, 80, 0.2); /* Светло-желтый при наведении */
+}
+
+.activeTab {
+  background-color: #F4C550; /* Желтый цвет активной вкладки */
+}
+
+.activeTab:hover {
+  background-color: #F3B249;
+}
+
+.tabContentArea {
+  width: 100%;
+}
+
+.tabPanel {
+  padding: 24px;
+  background-color: #FFFFFF;
+  border-radius: 30px;
+  font-size: 18px;
+  color: #121417;
+}

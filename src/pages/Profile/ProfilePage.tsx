@@ -2,6 +2,7 @@ import css from './Profile.module.css';
 import { UserInfoCard } from '../../components/Profile/UserInfoCard/UserInfoCard';
 import { NextLessonBanner } from '../../components/Profile/NextLessonBanner/NextLessonBanner';
 import { useAuthStore } from '../../store/authStore';
+import { ProfileTabs } from '../../components/ProfileTabs/ProfileTabs';
 
 export const ProfilePage = () => {
   const { user } = useAuthStore();
@@ -26,7 +27,7 @@ export const ProfilePage = () => {
              durationMinutes={60}
           />
         </section>
-
+              <ProfileTabs />
       </div>
     </div>
   );
