@@ -25,9 +25,9 @@ interface AuthState {
   loginWithFacebook: (roleForNewUser?: 'student' | 'teacher') => Promise<void>;
   checkUserRole: (uid: string) => Promise<void>;
   initAuth: () => void;
-   addToFavorites: (teacherId: string) => Promise<void>;
-    removeFromFavorites: (teacherId: string) => Promise<void>;
-    checkIfFavorite: (teacherId: string) => boolean;
+  addToFavorites: (teacherId: string) => Promise<void>;
+  removeFromFavorites: (teacherId: string) => Promise<void>;
+  checkIfFavorite: (teacherId: string) => boolean;
 }
 
 const auth = getAuth();
@@ -60,7 +60,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     
     await updateProfile(user, { displayName: name });
     
-    // 1. Формируем данные для базовой коллекции users
     const userDataToSave = {
       uid: user.uid,
       email: user.email,
@@ -68,13 +67,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       role: role,
       createdAt: new Date().toISOString(),
       favorites: [],
+      stats: {
+        completed_lessons_total: 0,
+        completed_lessons_this_month: 0,
+        hours_learned_total: 0,
+        monthly_hours_goal: 20,
+        weekly_streak: 0,
+        lessons_balance: 0
+      },
       ...extraData 
     };
 
-    // Сохраняем в коллекцию users
     await setDoc(doc(db, 'users', user.uid), userDataToSave);
 
-    // 2. ЕСЛИ ЭТО УЧИТЕЛЬ — создаем карточку в коллекции teachers под фильтры
     if (role === 'teacher') {
       const teacherCardData = {
         name: name,
@@ -90,7 +95,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         conditions: ["First lesson is free"] 
       };
 
-      // Сохраняем в коллекцию teachers
       await setDoc(doc(db, 'teachers', user.uid), teacherCardData);
     }
     
@@ -122,6 +126,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
          photoURL: user.photoURL,
          role: roleForNewUser,
          createdAt: new Date().toISOString(),
+         favorites: [],
+         stats: {
+           completed_lessons_total: 0,
+           completed_lessons_this_month: 0,
+           hours_learned_total: 0,
+           monthly_hours_goal: 20,
+           weekly_streak: 0,
+           lessons_balance: 0
+         }
        };
        await setDoc(userDocRef, dataToSave);
        set({ user, userRole: roleForNewUser, userData: dataToSave });
@@ -146,6 +159,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
          photoURL: user.photoURL,
          role: roleForNewUser,
          createdAt: new Date().toISOString(),
+         favorites: [],
+         stats: {
+           completed_lessons_total: 0,
+           completed_lessons_this_month: 0,
+           hours_learned_total: 0,
+           monthly_hours_goal: 20,
+           weekly_streak: 0,
+           lessons_balance: 0
+         }
        };
        await setDoc(userDocRef, dataToSave);
        set({ user, userRole: roleForNewUser, userData: dataToSave });
@@ -166,16 +188,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ isLoading: false }); 
     });
   },
-   addToFavorites: async (teacherId: string) => {
+  
+  addToFavorites: async (teacherId: string) => {
     const user = get().user;
     if (!user) return;
 
-    // обновить Firestore
     await updateDoc(doc(db, 'users', user.uid), {
-      favorites: arrayUnion(teacherId) // добавит, если нет
+      favorites: arrayUnion(teacherId) 
     });
 
-    // обновить локальный стейт
     const currentData = get().userData;
     set({
       userData: {
@@ -189,12 +210,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const user = get().user;
     if (!user) return;
 
-    // обновить Firestore
     await updateDoc(doc(db, 'users', user.uid), {
-      favorites: arrayRemove(teacherId) // удалит
+      favorites: arrayRemove(teacherId) 
     });
 
-    // обновить локальный стейт
     const currentData = get().userData;
     set({
       userData: {

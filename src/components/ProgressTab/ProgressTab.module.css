@@ -1,0 +1,85 @@
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.statCard {
+    background-color: #FFFFFF;
+    /* Меняем на белый, чтобы выделить на сером фоне страницы */
+    border: 1px solid rgba(18, 20, 23, 0.05);
+    /* Добавляем легкую границу */
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.balanceCard {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    /* Заставляем внутренний div растянуться до самого низа */
+    gap: 12px;
+}
+
+.balanceCard .cardValue {
+    white-space: nowrap;
+}
+
+.balanceCard>div {
+    display: flex;
+    flex-direction: column;
+}
+
+.cardTitle {
+    font-size: 16px;
+    color: #8A8A89;
+    /* Серый цвет для заголовков */
+    margin-bottom: 12px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+}
+
+.cardValue {
+    font-size: 32px;
+    font-weight: 700;
+    color: #121417;
+    margin-bottom: 8px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.cardSubtext {
+    font-size: 14px;
+    color: #8A8A89;
+    margin-top: auto;
+    font-family: 'Roboto', sans-serif;
+}
+
+.cardSubtextSuccess {
+    font-size: 14px;
+    color: #38CD3E;
+    font-weight: 500;
+    margin-top: auto;
+    font-family: 'Roboto', sans-serif;
+}
+
+.topUpBtn {
+    align-self: flex-start;
+    background-color: #F4C550;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #121417;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+    font-family: 'Roboto', sans-serif;
+}
+
+.topUpBtn:hover {
+    background-color: #F3B249;
+}
