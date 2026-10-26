@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useAuthStore } from "../../store/authStore";
 import { useTeacherStore } from "../../store/teacherStore";
 import css from "./ProfileTabs.module.css";
-// Импорт компонентов контента (пока есть только ProgressTab, остальные можно добавить позже)
 import { ProgressTab } from "../ProgressTab/ProgressTab";
+import { ScheduleTab } from '../ScheduleTab/ScheduleTab';
 
 export const ProfileTabs = () => {
   // Достаем роль и данные профиля (нужно для студента)
@@ -26,7 +26,6 @@ export const ProfileTabs = () => {
   ];
 
   // --- ДАННЫЕ ДЛЯ ПРЕПОДАВАТЕЛЯ ---
-  // Считаем реальное количество элементов на основе загруженных массивов
   const scheduleCount = upcomingLessons?.length || 0;
   const studentsCount = myStudents?.length || 0;
   const reviewsCount = reviews?.length || 0;
@@ -39,7 +38,6 @@ export const ProfileTabs = () => {
     { id: "settings", label: "⚙️ Settings" },
   ];
 
-  // Выбираем нужный массив кнопок в зависимости от того, кто вошел
   const currentTabs = userRole === 'teacher' ? teacherTabs : studentTabs;
 
   // Функция для отрисовки разного контента
@@ -48,7 +46,7 @@ export const ProfileTabs = () => {
       // Контент для преподавателя
       switch (activeTab) {
         case "schedule":
-          return <div className={css.tabPanel}>Здесь будет компонент расписания (My Schedule)</div>;
+          return <ScheduleTab />; // Подключили компонент расписания
         case "students":
           return <div className={css.tabPanel}>Здесь будет список студентов (My Students)</div>;
         case "reviews":
@@ -58,7 +56,7 @@ export const ProfileTabs = () => {
         case "settings":
           return <div className={css.tabPanel}>Настройки преподавателя</div>;
         default:
-          return <div className={css.tabPanel}>Здесь будет компонент расписания</div>;
+          return <ScheduleTab />;
       }
     } else {
       // Контент для студента
@@ -79,7 +77,6 @@ export const ProfileTabs = () => {
 
   return (
     <div className={css.tabsWrapper}>
-      {/* Навигация (кнопки вкладок) */}
       <div className={css.tabsNavigation}>
         {currentTabs.map((tab) => (
           <button
@@ -92,7 +89,6 @@ export const ProfileTabs = () => {
         ))}
       </div>
 
-      {/* Область контента выбранной вкладки */}
       <div className={css.tabContentArea}>{renderContent()}</div>
     </div>
   );

@@ -17,8 +17,10 @@ interface AuthState {
   user: User | null;
   userRole: 'student' | 'teacher' | null;
   userData: any | null; 
+  googleAccessToken: string | null; // Добавлено для хранения токена Google API
   isLoading: boolean;
   setUser: (user: User | null) => void;
+  setGoogleToken: (token: string | null) => void; // Метод для ручного обновления токена при необходимости
   registerWithEmail: (email: string, pass: string, role: 'student' | 'teacher', name: string, extraData?: any) => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   loginWithGoogle: (roleForNewUser?: 'student' | 'teacher') => Promise<void>;
@@ -31,16 +33,22 @@ interface AuthState {
 }
 
 const auth = getAuth();
+
+// Инициализируем провайдер и сразу добавляем права на календарь
 const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope('https://www.googleapis.com/auth/calendar.events');
+
 const facebookProvider = new FacebookAuthProvider();
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   userRole: null,
   userData: null, 
+  googleAccessToken: null, // Инициализация
   isLoading: true,
   
   setUser: (user) => set({ user }),
+  setGoogleToken: (token) => set({ googleAccessToken: token }),
 
   checkUserRole: async (uid: string) => {
     try {
@@ -115,6 +123,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
     
+    // Извлекаем токен доступа к Google API и сохраняем его в стейт
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential?.accessToken || null;
+    
     const userDocRef = doc(db, 'users', user.uid);
     const userDoc = await getDoc(userDocRef);
 
@@ -137,10 +149,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
          }
        };
        await setDoc(userDocRef, dataToSave);
-       set({ user, userRole: roleForNewUser, userData: dataToSave });
+       set({ user, userRole: roleForNewUser, userData: dataToSave, googleAccessToken: token });
     } else {
        const data = userDoc.data();
-       set({ user, userRole: data.role, userData: data });
+       set({ user, userRole: data.role, userData: data, googleAccessToken: token });
     }
   },
 
@@ -183,7 +195,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ user });
         await get().checkUserRole(user.uid); 
       } else {
-        set({ user: null, userRole: null, userData: null });
+        // Очищаем токен при выходе
+        set({ user: null, userRole: null, userData: null, googleAccessToken: null });
       }
       set({ isLoading: false }); 
     });

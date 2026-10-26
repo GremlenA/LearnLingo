@@ -1,0 +1,54 @@
+.tabContainer {
+  margin-top: 24px;
+}
+
+.controlsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+}
+
+.filterBtn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #E5E7EB;
+  background-color: #FFFFFF;
+  color: #121417;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filterBtn.active {
+  background-color: #F4C550;
+  border-color: #F4C550;
+}
+
+.createBtn {
+  background-color: #F4C550;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #121417;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.createBtn:hover {
+  background-color: #E2B33E;
+}
+
+.lessonsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

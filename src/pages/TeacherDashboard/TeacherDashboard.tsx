@@ -20,21 +20,28 @@ export const TeacherDashboard = () => {
   if (isLoading) return <div>Загрузка кабинета...</div>;
 
   return (
-    <div>
+    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+      
       <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
          {/* Эти карточки просто отрисовывают UI */}
          <UserInfoCard />
+         
+         {/* Временно оставляем статичные данные, позже заменим на ближайший урок из базы */}
          <NextLessonBanner 
             participantName="Alex Kovalenko" 
             subject="English" 
             lessonType="Regular Lesson" 
-            startTime={new Date()} 
+            // Для наглядности таймера ставим время начала через 42 минуты
+            startTime={new Date(Date.now() + 42 * 60000)} 
             durationMinutes={60} 
          />
       </div>
       
-      {/* Вкладки автоматически подхватят загруженные данные из teacherStore */}
+      {/* Вкладки автоматически подхватят загруженные данные из teacherStore. 
+          А модальное окно и кнопка "+ Schedule Lesson" теперь живут внутри ProfileTabs -> ScheduleTab 
+      */}
       <ProfileTabs />
+      
     </div>
   );
 };

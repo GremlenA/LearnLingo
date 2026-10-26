@@ -1,0 +1,203 @@
+/* Затемненный фон поверх всего экрана */
+.modalOverlay {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Белая карточка модального окна */
+.modalContainer {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 32px;
+  width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.title {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #121417;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Стили для селекта ученика */
+.studentSelectWrapper {
+  margin-bottom: 20px;
+}
+
+.studentSelect {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  font-size: 16px;
+  outline: none;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+}
+
+.studentSelect:focus {
+  border-color: #F4C550;
+}
+
+/* Стили для ручного ввода ссылки */
+.manualLinkWrapper {
+  margin-bottom: 24px;
+}
+
+.manualLinkInput {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  font-size: 16px;
+  outline: none;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.manualLinkInput:focus {
+  border-color: #F4C550;
+}
+
+.helperText {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #8A8A8E;
+  line-height: 1.4;
+}
+
+/* Календарь */
+.monthHeader {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #121417;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.weekDay {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #8A8A8E;
+  margin-bottom: 8px;
+}
+
+.dayCell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #121417;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+}
+
+.dayCell:hover:not(:empty) {
+  background: #F8F9FA;
+}
+
+.activeDay {
+  background: #F4C550 !important;
+  color: #121417;
+}
+
+/* Выбор времени (ручной ввод) */
+.timeInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.timeInputLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #121417;
+  font-family: 'Roboto', sans-serif;
+}
+
+.timeInput {
+  padding: 10px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+  color: #121417;
+  background-color: #FFFFFF;
+  outline: none;
+  cursor: text;
+}
+
+.timeInput:focus {
+  border-color: #F4C550;
+}
+
+/* Кнопки Confirm / Cancel */
+.actionButtons {
+  display: flex;
+  gap: 16px;
+}
+
+.confirmBtn, .cancelBtn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.confirmBtn {
+  background: #F4C550;
+  border: none;
+  color: #121417;
+}
+
+.confirmBtn:hover:not(:disabled) {
+  background: #E2B33E;
+}
+
+.confirmBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  color: #121417;
+}
+
+.cancelBtn:hover {
+  background: #F8F9FA;
+}
