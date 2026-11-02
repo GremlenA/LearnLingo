@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import css from './ScheduleLessonModal.module.css';
 import { useAuthStore } from '../../store/authStore';
+import { useTeacherStore } from '../../store/teacherStore'; // Подключаем стор преподавателя
 import { createMeetLink } from '../../api/googleCalendar';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/getFirestore'; 
@@ -11,12 +12,13 @@ interface ScheduleLessonModalProps {
 
 export const ScheduleLessonModal: React.FC<ScheduleLessonModalProps> = ({ onClose }) => {
   const { user, googleAccessToken } = useAuthStore();
+  const { myStudents } = useTeacherStore(); // Достаем массив учеников
   
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 9, 1)); 
   const [selectedDate, setSelectedDate] = useState<number | null>(15);
-  // Оставляем дефолтное значение
   const [selectedTime, setSelectedTime] = useState<string>('18:00'); 
   
+  // В selectedStudent теперь будет храниться ID ученика
   const [selectedStudent, setSelectedStudent] = useState<string>(''); 
   const [manualMeetingUrl, setManualMeetingUrl] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,7 +47,6 @@ export const ScheduleLessonModal: React.FC<ScheduleLessonModalProps> = ({ onClos
     setIsSubmitting(true);
 
     try {
-      // Строка '18:30' легко разбивается на [18, 30]
       const [hours, minutes] = selectedTime.split(':').map(Number);
       const lessonDateTime = new Date(currentMonth);
       lessonDateTime.setDate(selectedDate);
@@ -61,14 +62,21 @@ export const ScheduleLessonModal: React.FC<ScheduleLessonModalProps> = ({ onClos
         finalMeetUrl = generatedUrl;
       }
 
+      // Находим имя выбранного ученика по его ID из массива
+      const studentInfo = myStudents.find((s: any) => (s.uid || s.id) === selectedStudent);
+      const studentName = studentInfo?.displayName || studentInfo?.name || "Student";
+
+      // Создаем документ урока
       await addDoc(collection(db, 'lessons'), {
         teacherId: user?.uid,
-        studentName: selectedStudent,
+        studentId: selectedStudent, // Сохраняем реальный ID
+        studentName: studentName,   // Сохраняем реальное имя
         subject: "English",
         lessonType: "Regular Lesson",
         startTime: lessonDateTime.toISOString(),
         durationMinutes: 60,
         meetingUrl: finalMeetUrl, 
+        status: 'scheduled', // Добавлен статус
         createdAt: new Date().toISOString()
       });
 
@@ -95,8 +103,12 @@ export const ScheduleLessonModal: React.FC<ScheduleLessonModalProps> = ({ onClos
             onChange={(e) => setSelectedStudent(e.target.value)}
           >
              <option value="" disabled>Select student...</option>
-             <option value="Alex Kovalenko">Alex Kovalenko</option>
-             <option value="Jane Doe">Jane Doe</option>
+             {/* Динамический рендер учеников */}
+             {myStudents.map((student: any) => (
+               <option key={student.id || student.uid} value={student.uid || student.id}>
+                 {student.displayName || student.name || 'Unknown Student'}
+               </option>
+             ))}
           </select>
         </div>
 
@@ -135,7 +147,6 @@ export const ScheduleLessonModal: React.FC<ScheduleLessonModalProps> = ({ onClos
           ))}
         </div>
 
-        {/* НОВЫЙ БЛОК: Ручной ввод времени */}
         <div className={css.timeInputWrapper}>
           <label htmlFor="lessonTime" className={css.timeInputLabel}>Start time:</label>
           <input 

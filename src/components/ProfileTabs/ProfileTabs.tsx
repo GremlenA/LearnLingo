@@ -4,6 +4,7 @@ import { useTeacherStore } from "../../store/teacherStore";
 import css from "./ProfileTabs.module.css";
 import { ProgressTab } from "../ProgressTab/ProgressTab";
 import { ScheduleTab } from '../ScheduleTab/ScheduleTab';
+import { SettingsTab } from "../Settings/SettingsTab";
 
 export const ProfileTabs = () => {
   // Достаем роль и данные профиля (нужно для студента)
@@ -53,8 +54,9 @@ export const ProfileTabs = () => {
           return <div className={css.tabPanel}>Здесь будут отзывы (Reviews)</div>;
         case "earnings":
           return <div className={css.tabPanel}>Здесь будет статистика доходов (Earnings)</div>;
-        case "settings":
-          return <div className={css.tabPanel}>Настройки преподавателя</div>;
+    
+          case "settings":
+          return <SettingsTab />; 
         default:
           return <ScheduleTab />;
       }
@@ -67,8 +69,9 @@ export const ProfileTabs = () => {
           return <div className={css.tabPanel}>Здесь будут уроки студента</div>;
         case "favorites":
           return <div className={css.tabPanel}>Здесь будут избранные репетиторы</div>;
-        case "settings":
-          return <div className={css.tabPanel}>Настройки студента</div>;
+    
+          case "settings":
+          return <SettingsTab />;
         default:
           return <ProgressTab />;
       }

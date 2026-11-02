@@ -1,0 +1,138 @@
+/* 1. Главная карточка (обертка для всего блока) */
+.personalInfoCard {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px; /* Расстояние между секцией аватара и инпутами */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+/* --- СЕКЦИЯ АВАТАРА --- */
+
+/* 2. Контейнер аватара и кнопок */
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+/* 3. Обертка для кружка аватара */
+.avatarWrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+}
+
+/* 4. Сама картинка (с обводкой) */
+.avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+  border: 3px solid #F4C550;
+  object-fit: cover;
+}
+
+/* 5. Кнопка с камерой */
+.cameraBtn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.cameraBtn:hover {
+  background-color: #f8f8f8;
+  transform: scale(1.05);
+}
+
+/* 6. Контейнер для текстовых кнопок */
+.avatarActions {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Расстояние между Upload и Remove */
+}
+
+/* 7. Кнопки Upload и Remove (единый стиль) */
+.uploadBtn, .removeBtn {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 600; /* SemiBold */
+  color: #121417;
+  background-color: #ffffff;
+  border: 1px solid #E8E8E9;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.uploadBtn:hover, .removeBtn:hover {
+  background-color: #f5f5f5;
+}
+
+/* --- СЕКЦИЯ ИНПУТОВ (СЕТКА) --- */
+
+/* 8. Сетка инпутов (2 колонки) */
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 20px; /* 24px между рядами по вертикали, 20px между колонками по горизонтали */
+}
+
+/* 9. Отдельная группа (Лейбл + Инпут) */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Расстояние от текста до поля ввода */
+  align-items: flex-start;
+}
+
+/* 10. Лейблы (First name, Email и т.д.) */
+.inputGroup label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #8A8A89;
+}
+
+/* 11. Сами поля ввода */
+.inputGroup input {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #E8E8E9;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #121417;
+  box-sizing: border-box; /* Чтобы padding не ломал сетку */
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.inputGroup input:focus {
+  border-color: #F4C550;
+}
+
+/* 12. Сообщения об ошибках (от Yup) */
+.error {
+  color: #D32F2F; /* Красный цвет для ошибок валидации */
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  margin-top: 4px;
+}

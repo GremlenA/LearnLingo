@@ -9,21 +9,30 @@ export const UserInfoCard = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    const userName = user?.displayName || 'User';
+    // 1. Имя
+    const displayFirstName = userData?.firstName || "";
+    const displayLastName = userData?.lastName || "";
+    const fullName = (displayFirstName || displayLastName) 
+        ? `${displayFirstName} ${displayLastName}`.trim() 
+        : userData?.displayName || user?.displayName || 'User';
     
+    // 2. Роль
     const displayRole = userRole 
         ? userRole.charAt(0).toUpperCase() + userRole.slice(1) 
         : 'Student';
     
-    // Динамический префикс в зависимости от роли
     const actionText = userRole === 'teacher' ? 'Teaches:' : 'Learns:';
     
-    const displayLanguage = userData?.language;
-    const displayLevel = userData?.level;
-    const displayPrice = userData?.price ? ` • $${userData.price}/hr` : '';
-    const displayTimezone = userData?.timezone || 'GMT+3'; // Берем из базы или ставим дефолт
+    // 3. Данные (если пустые, пишем 'Not set')
+    const displayLanguage = userData?.language || 'Not set';
+    const displayLevel = userData?.specializationLevel || userData?.currentLevel || 'Not set';
     
-    const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=FBE9BA&color=121417&size=128&bold=true`;
+    // У студента цены нет, поэтому показываем только для учителя
+    const displayPrice = (userRole === 'teacher' && userData?.hourlyRate) 
+        ? ` • $${userData.hourlyRate}/hr` 
+        : '';
+    
+    const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=FBE9BA&color=121417&size=128&bold=true`;
     const displayAvatar = previewUrl || user?.photoURL || fallbackAvatar;
 
     const handleCameraClick = () => {
@@ -33,21 +42,17 @@ export const UserInfoCard = () => {
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
-
         const localImageUrl = URL.createObjectURL(file);
         setPreviewUrl(localImageUrl);
-        // Здесь в будущем нужно добавить функцию загрузки файла в Firebase Storage
     };
 
     return (
        <div className={css.cardWrapper}>
           <div className={css.avatarWrapper}>
-              <img className={css.avatar} src={displayAvatar} alt={userName}/>
-              
+              <img className={css.avatar} src={displayAvatar} alt={fullName}/>
               <button className={css.cameraBtn} type="button" onClick={handleCameraClick}>
                 <img src={CameraIcon} alt="CameraIcon" width={16} height={16}/>
               </button>
-              
               <input 
                   type="file" 
                   ref={fileInputRef} 
@@ -59,18 +64,14 @@ export const UserInfoCard = () => {
 
           <div className={css.infoWrapper}>
             <div className={css.nameRow}>
-               <h2 className={css.name}>{userName}</h2>
+               <h2 className={css.name}>{fullName}</h2>
                <span className={css.roleBadge}>{displayRole}</span>
             </div>
             
-            {/* Рендерим блок только если язык и уровень есть в базе */}
-            {(displayLanguage || displayLevel) && (
-                <div className={css.levelBadge}>
-                    {actionText} {displayLanguage} • Level: {displayLevel}{displayPrice}
-                </div>
-            )}
-            
-        
+            {/* ТЕПЕРЬ СТРОЧКА ВЫВОДИТСЯ ВСЕГДА */}
+            <div className={css.levelBadge}>
+                {actionText} {displayLanguage} • Level: {displayLevel}{displayPrice}
+            </div>
             
             <button type="button" className={css.editBtn}>Edit profile</button>
           </div>

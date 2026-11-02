@@ -1,0 +1,67 @@
+.preferencesCard {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px; /* Чуть больше отступ сверху из-за заголовка */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-top: 24px; /* Отступ от верхней карточки Personal Info */
+}
+
+.title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #121417;
+  margin-bottom: 24px;
+  margin-top: 0;
+}
+
+.fieldsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.inputGroup label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #8A8A89;
+}
+
+/* Общие стили для input и select, чтобы они выглядели одинаково */
+.input, .select {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #E8E8E9;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #121417;
+  box-sizing: border-box;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
+  transition: border-color 0.2s ease;
+  background-color: #ffffff;
+}
+
+/* Для select добавляем курсор-указатель */
+.select {
+  cursor: pointer;
+  appearance: auto; /* Оставляем стандартную стрелочку ОС для простоты */
+}
+
+.input:focus, .select:focus {
+  border-color: #F4C550;
+}
+
+.error {
+  color: #D32F2F;
+  font-size: 12px;
+  font-family: 'Roboto', sans-serif;
+  margin-top: 4px;
+}
