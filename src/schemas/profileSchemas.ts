@@ -19,12 +19,12 @@ export const baseProfileSchema = yup.object({
     ),
   phone: yup
     .string()
-    .notRequired() // Делаем поле необязательным
+    .notRequired() 
     .matches(
       /^\+?[0-9\s]{10,20}$/,
       { 
         message: "Invalid phone format. Only digits, spaces, and a leading '+' are allowed.", 
-        excludeEmptyString: true // Важно: игнорируем регулярку, если строка пустая
+        excludeEmptyString: true 
       }
     )
 });
@@ -43,7 +43,6 @@ export const teacherProfileSchema = baseProfileSchema.shape({
   mainGoal: yup.string().notRequired(),
   hourlyRate: yup
     .number()
-    // Если поле пустое, превращаем его в null, чтобы Yup не ругался на ошибку типа NaN
     .transform((value, originalValue) => (String(originalValue).trim() === "" ? null : value))
     .nullable()
     .notRequired()
