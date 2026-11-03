@@ -43,9 +43,36 @@ export const teacherProfileSchema = baseProfileSchema.shape({
   mainGoal: yup.string().notRequired(),
   hourlyRate: yup
     .number()
-    .transform((value, originalValue) => (String(originalValue).trim() === "" ? null : value))
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === "" ? null : value
+    )
     .nullable()
     .notRequired()
     .positive("Rate must be positive")
-    .integer("Rate must be an integer")
+    .integer("Rate must be an integer"),
+    
+  // --- НОВОЕ ПОЛЕ: Дополнительные языки ---
+  spokenLanguages: yup.array().of(yup.string()).default([]),
+
+  // Расписание 
+  availability: yup
+    .object()
+    .shape({
+      monday: yup.array().of(yup.string()).default([]),
+      tuesday: yup.array().of(yup.string()).default([]),
+      wednesday: yup.array().of(yup.string()).default([]),
+      thursday: yup.array().of(yup.string()).default([]),
+      friday: yup.array().of(yup.string()).default([]),
+      saturday: yup.array().of(yup.string()).default([]),
+      sunday: yup.array().of(yup.string()).default([]),
+    })
+    .default(() => ({
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+      saturday: [],
+      sunday: [],
+    })),
 });

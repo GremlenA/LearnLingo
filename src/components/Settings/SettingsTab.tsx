@@ -4,9 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/getFirestore'; 
 import { useAuthStore } from '../../store/authStore';
-// 1. ИСПРАВЛЕНО: Правильный импорт схем валидации
 import { teacherProfileSchema, studentProfileSchema } from '../../schemas/profileSchemas'; 
-// 2. ИСПРАВЛЕНО: Правильные относительные пути к компонентам внутри папки Settings
 import { PersonalInfoFields } from './PersonalInfoFields/PersonalInfoFields';
 import { TeachingPreferencesFields } from './TeachingPreferencesFields/TeachingPreferencesFields'; 
 import { LearningPreferencesFields } from './LearningPreferencesFields/LearningPreferencesFields';
@@ -24,6 +22,11 @@ export const SettingsTab = () => {
   const fallbackFirstName = nameParts[0] || ""; 
   const fallbackLastName = nameParts.slice(1).join(" ") || ""; 
 
+  // Создаем пустой шаблон на случай, если в Firebase еще нет данных расписания
+  const defaultAvailability = {
+    monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: []
+  };
+
   // Инициализируем форму
   const methods = useForm({
     resolver: yupResolver(currentSchema as any),
@@ -38,6 +41,12 @@ export const SettingsTab = () => {
       currentLevel: userData?.currentLevel || "", 
       mainGoal: userData?.mainGoal || "",
       hourlyRate: userData?.hourlyRate || "",
+      
+      // --- Подключаем расписание ---
+      availability: userData?.availability || defaultAvailability,
+
+      // --- НОВОЕ ПОЛЕ: Дополнительные языки ---
+      spokenLanguages: userData?.spokenLanguages || [],
     }
   });
 

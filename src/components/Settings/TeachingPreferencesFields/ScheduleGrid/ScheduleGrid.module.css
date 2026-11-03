@@ -1,0 +1,94 @@
+.scheduleCard {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-top: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #121417;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #8A8A89;
+}
+
+.gridWrapper {
+  width: 100%;
+  overflow-x: auto; /* Добавили скролл на случай маленьких экранов */
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 16px;
+  min-width: 700px; /* Чтобы кнопки не сжимались слишком сильно */
+}
+
+.dayColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dayLabel {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8A8A89;
+  margin-bottom: 16px;
+}
+
+.slotsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.slotBtn {
+  width: 100%;
+  padding: 12px 0;
+  border-radius: 12px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Состояние: Не выбран (серый) */
+.unselected {
+  background-color: #F8F8F8;
+  color: #8A8A89;
+}
+
+.unselected:hover {
+  background-color: #E8E8E9;
+}
+
+/* Состояние: Выбран (желтый) */
+.selected {
+  background-color: #F4C550;
+  color: #121417;
+  font-weight: 600;
+}
+
+.selected:hover {
+  background-color: #e0b446;
+}

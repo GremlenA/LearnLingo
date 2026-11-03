@@ -1,0 +1,126 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 20, 23, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popUp {
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  color: #121417;
+}
+
+.message {
+  font-size: 16px;
+  color: #8A8A89;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.select {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #E8E8E9;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+  color: #121417;
+  outline: none;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.select:focus {
+  border-color: #F4C550;
+}
+
+.select:disabled {
+  background-color: #F8F8F8;
+  color: #8A8A89;
+  cursor: not-allowed;
+}
+
+.btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  background-color: #F4C550;
+  color: #121417;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #e0b446;
+}
+
+.btn:disabled {
+  background-color: #E8E8E9;
+  color: #8A8A89;
+  cursor: not-allowed;
+}
+
+.cancelBtn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #E8E8E9;
+  background-color: transparent;
+  color: #121417;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.cancelBtn:hover {
+  border-color: #121417;
+}
+
+.timeInputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.timeHint {
+  position: absolute;
+  left: 18px;
+  top: 15px;
+  color: #8A8A89;
+  pointer-events: none;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Специальное правило для поля времени, чтобы убрать стандартную иконку часов в некоторых браузерах, если она мешает тексту */
+.select[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}

@@ -14,6 +14,7 @@ export interface TeacherProps {
   name: string;
   surname: string;
   languages: string[];
+  spokenLanguages?: string[]; // НОВОЕ: Массив дополнительных языков
   levels: string[];
   rating: number;
   reviews: Review[];
@@ -31,6 +32,7 @@ export const TeacherCard = ({
   name,
   surname,
   languages,
+  spokenLanguages,
   levels,
   selectedLevel,
   rating,
@@ -69,14 +71,15 @@ export const TeacherCard = ({
       console.error("Error toggling favorite:", error);
     }
   };
+
   //4. проверка авторизации пользователя для отображения кнопки "Book trial lesson"
-     const handleBooklessons = () =>{
-       if(!user){
-         toast.error('Please log in to book a lesson');
+  const handleBooklessons = () =>{
+    if(!user){
+      toast.error('Please log in to book a lesson');
       return;
-       }
-        setIsModalOpen(true);
-     }
+    }
+    setIsModalOpen(true);
+  }
 
   return (
     <div className={css.card}>
@@ -130,10 +133,22 @@ export const TeacherCard = ({
         </div>
 
         <div className={css.detailsWrapper}>
+          {/* Основной преподаваемый язык */}
           <p className={css.detailsText}>
-            <span className={css.label}>Speaks: </span>
+            <span className={css.label}>Teaches: </span>
             <span className={css.highlightedText}>{languages.join(", ")}</span>
           </p>
+
+          {/* НОВОЕ: Выводим дополнительные языки, если они есть */}
+          {spokenLanguages && spokenLanguages.length > 0 && (
+            <p className={css.detailsText}>
+              <span className={css.label}>Also speaks: </span>
+              <span className={css.highlightedText} style={{ textDecoration: 'underline' }}>
+                {spokenLanguages.join(", ")}
+              </span>
+            </p>
+          )}
+
           <p className={css.detailsText}>
             <span className={css.label}>Lesson Info: </span>
             {lesson_info}

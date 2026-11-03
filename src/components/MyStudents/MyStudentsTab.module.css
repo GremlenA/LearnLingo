@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #E8E8E9;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #121417;
+  background-color: #ffffff;
+  outline: none;
+  cursor: pointer;
+}
+
+.filterSelect:hover {
+  border-color: #121417;
+}
+
+.grid {
+  display: grid;
+  /* Автоматически расставляем карточки по колонкам с минимальной шириной 350px */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.statusMessage {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  color: #8A8A89;
+  text-align: center;
+  padding: 40px;
+}

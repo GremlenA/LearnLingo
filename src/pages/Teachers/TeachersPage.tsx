@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+// ИСПРАВЛЕНИЕ 1: Импортируем onSnapshot и query, where для правильного запроса
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../firebase/getFirestore";
 import css from "./Teachers.module.css";
 import { TeacherCard } from "../../components/TeacherCard/TeacherCard";
@@ -64,32 +65,53 @@ export const TeachersPage = () => {
   }, [language, level, price]);
 
   useEffect(() => {
-    const getTeachersData = async () => {
-      try {
-        const teachersRef = collection(db, "teachers");
-        const querySnapshot = await getDocs(teachersRef);
-        const tacherArray: any[] = [];
+    // ИСПРАВЛЕНИЕ 2: Запрашиваем из коллекции users, где role == teacher
+    const q = query(collection(db, "users"), where("role", "==", "teacher"));
 
-        querySnapshot.forEach((doc) => {
-          tacherArray.push({ id: doc.id, ...doc.data() });
+    // ИСПРАВЛЕНИЕ 3: Используем onSnapshot для обновлений в реальном времени
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const teacherArray: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        
+        // ИСПРАВЛЕНИЕ 4: Адаптируем ключи из формы настроек под формат карточки
+        teacherArray.push({ 
+          id: doc.id,
+          // Если данные пришли из старой коллекции, используем их, иначе берем новые из настроек
+          name: data.firstName || data.name || "Unknown",
+          surname: data.lastName || data.surname || "",
+          languages: data.language ? [data.language] : (data.languages || []), // Формируем массив
+          spokenLanguages: data.spokenLanguages || [], // Передаем новые языки
+          levels: data.specializationLevel ? [data.specializationLevel] : (data.levels || []),
+          price_per_hour: data.hourlyRate || data.price_per_hour || 0,
+          
+          // Стандартные/старые поля
+          avatar_url: data.photoURL || data.avatar_url || "",
+          rating: data.rating || 0,
+          lessons_done: data.lessons_done || 0,
+          reviews: data.reviews || [],
+          lesson_info: data.lesson_info || "Ready to help you achieve your goals!",
+          conditions: data.conditions || [],
+          experience: data.experience || "Experienced teacher.",
+          ...data 
         });
-        setTeachers(tacherArray);
-      } catch (error) {
-        console.error("Ошибка загрузки:", error);
-      }
-    };
-    getTeachersData();
+      });
+      setTeachers(teacherArray);
+    }, (error) => {
+      console.error("Ошибка загрузки:", error);
+    });
+
+    // Отписываемся при размонтировании
+    return () => unsubscribe();
   }, []);
 
-  // ОБНОВЛЕННАЯ ЛОГИКА ФИЛЬТРАЦИИ
   const filteredTeachers = teachers.filter((teacher) => {
-    // 1. Поиск языка (игнорирует регистр, например, "english" найдет "English")
     const isLanguageMatch = language === "" ? true : 
       (teacher.languages || []).some((lang: string) => 
         lang.toLowerCase().includes(language.toLowerCase().trim())
       );
 
-    // 2. Поиск уровня (игнорирует решетки и ищет частичные совпадения)
     const isLevelMatch = level === "" ? true : 
       (teacher.levels || []).some((lvl: string) => {
         const safeLvl = lvl.toLowerCase().replace('#', '').trim();
@@ -97,7 +119,6 @@ export const TeachersPage = () => {
         return safeLvl.includes(safeFilter) || safeFilter.includes(safeLvl);
       });
 
-    // 3. ИСПРАВЛЕННЫЙ Поиск цены (Ищет преподавателей, чья цена МЕНЬШЕ ИЛИ РАВНА выбранной в фильтре)
     const isPriceMatch = price === "" ? true : 
       Number(teacher.price_per_hour) <= Number(price.replace(/\D/g, ''));
 
@@ -119,7 +140,7 @@ export const TeachersPage = () => {
 
         <CustomSelect
           label="Level of knowledge"
-          options={['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate']}
+          options={['A1 Beginner', 'A2 Elementary', 'B1 Intermediate', 'B2 Upper-Intermediate', 'C1 Advanced', 'C2 Proficient']}
           value={level}
           onChange={setLevel}
         />
@@ -145,14 +166,12 @@ export const TeachersPage = () => {
 
       <div className={css.cardsList}>
         
-        {/* Сообщение при пустом результате фильтрации */}
         {paginatedTeachers.length === 0 && (
           <p className={css.noResults}>
             No teachers found for your filters. Try changing the criteria.
           </p>
         )}
 
-        {/* Вывод карточек */}
         {paginatedTeachers.map((teacher) => (
           <TeacherCard 
             key={teacher.id} 
@@ -161,7 +180,6 @@ export const TeachersPage = () => {
           />
         ))}
 
-        {/* Кнопка загрузки дополнительных карточек */}
         {visibleCount < filteredTeachers.length && (
           <button 
             className={css.loadMoreBtn} 
