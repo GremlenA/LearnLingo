@@ -15,9 +15,12 @@ export const BookNextSlotModal: React.FC<Props> = ({ student, closeModal }) => {
   const { user, userData } = useAuthStore();
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Добавляем стейт для отслеживания фокуса на поле времени
+  // НОВОЕ: Стейт для ссылки на урок. 
+  // Если у юзера в профиле будет сохранена defaultMeetingLink, она подставится автоматически.
+  const [meetingLink, setMeetingLink] = useState(userData?.defaultMeetingLink || '');
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTimeFocused, setIsTimeFocused] = useState(false);
 
   const availability = userData?.availability || {};
@@ -36,17 +39,25 @@ export const BookNextSlotModal: React.FC<Props> = ({ student, closeModal }) => {
       toast.error("Please select day and time");
       return;
     }
+    
+    // Простая валидация ссылки (если она введена, она должна быть похожа на URL)
+    if (meetingLink && !meetingLink.startsWith('http')) {
+      toast.error("Meeting link must start with http:// or https://");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       if (!user?.uid) throw new Error("User not authenticated");
 
+      // НОВОЕ: Добавляем meetingLink в базу данных урока
       await addDoc(collection(db, 'lessons'), {
         teacherId: user.uid,
         studentId: student.id,
         studentName: student.fullName,
         day: selectedDay,
         time: selectedTime,
+        meetingLink: meetingLink || '', // Сохраняем ссылку или пустую строку
         status: 'scheduled',
         bookedBy: 'teacher', 
         createdAt: new Date().toISOString(),
@@ -96,7 +107,6 @@ export const BookNextSlotModal: React.FC<Props> = ({ student, closeModal }) => {
               ))}
             </select>
 
-            {/* ИСПРАВЛЕНО: Динамический тип поля ввода */}
             <input 
               type={selectedTime || isTimeFocused ? "time" : "text"}
               className={css.select}
@@ -106,6 +116,16 @@ export const BookNextSlotModal: React.FC<Props> = ({ student, closeModal }) => {
               onFocus={() => setIsTimeFocused(true)}
               onBlur={() => setIsTimeFocused(false)}
               placeholder="Enter time (e.g. 13:45)"
+            />
+
+            {/* НОВОЕ: Поле для ввода ссылки */}
+            <input 
+              type="url"
+              className={css.select}
+              value={meetingLink}
+              onChange={(e) => setMeetingLink(e.target.value)}
+              placeholder="Meeting link (Zoom, Meet, etc.)"
+              style={{ marginBottom: '24px' }}
             />
           </>
         )}

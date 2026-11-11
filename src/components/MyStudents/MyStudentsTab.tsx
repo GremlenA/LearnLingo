@@ -12,12 +12,16 @@ export const MyStudentsTab = () => {
   const [langFilter, setLangFilter] = useState('All');
   const [levelFilter, setLevelFilter] = useState('All');
   const [activityFilter, setActivityFilter] = useState('Recent');
+  const [visibleCount, setVisibleCount] = useState(10);
 
-  // Логика фильтрации и сортировки (пересчитывается только при изменении студентов или фильтров)
+  React.useEffect(() => {
+    setVisibleCount(10);
+  }, [langFilter, levelFilter, activityFilter]);
+  
   const filteredStudents = useMemo(() => {
     let result = [...students];
 
-    // 1. Фильтр по языку (или цели, так как в language мы сохраняем либо язык, либо reason)
+    // 1. Фильтр по языку
     if (langFilter !== 'All') {
       result = result.filter(student => 
         student.language.toLowerCase().includes(langFilter.toLowerCase())
@@ -33,18 +37,17 @@ export const MyStudentsTab = () => {
 
     // 3. Сортировка по активности
     if (activityFilter === 'Most lessons') {
-      // Сортируем по количеству проведенных уроков (от большего к меньшему)
       result.sort((a, b) => b.lessonsTogether - a.lessonsTogether);
     } else if (activityFilter === 'Recent') {
-      // По умолчанию хук возвращает их в порядке добавления/обновления (или можно оставить как есть)
-      // Если бы у нас был lastLessonDate в StudentCardData, мы бы сортировали по нему
+    
     }
 
     return result;
   }, [students, langFilter, levelFilter, activityFilter]);
 
-  // Собираем уникальные языки и уровни из списка МОИХ студентов, чтобы в дропдаунах 
-  // не было пустых опций (например, зачем выбирать Spanish, если таких учеников нет)
+  // Массив, который реально пойдет на экран
+  const studentsToShow = filteredStudents.slice(0, visibleCount);
+  
   const availableLanguages = ['All', ...Array.from(new Set(students.map(s => s.language)))];
   const availableLevels = ['All', ...Array.from(new Set(students.map(s => s.level)))];
 
@@ -93,6 +96,17 @@ export const MyStudentsTab = () => {
           <option value="Recent">Activity: Recent</option>
           <option value="Most lessons">Most lessons together</option>
         </select>
+
+        <button 
+          className={css.resetFilter}
+          onClick={() => {
+              setLevelFilter('All');
+              setLangFilter('All');
+              setActivityFilter('Recent'); 
+          }}
+        >
+          Reset
+        </button>
       </div>
 
       {/* Сетка карточек студентов */}
@@ -102,11 +116,25 @@ export const MyStudentsTab = () => {
         <div className={css.statusMessage}>No students match your filters.</div>
       ) : (
         <div className={css.grid}>
-          {filteredStudents.map((student) => (
+    
+          {studentsToShow.map((student) => (
             <StudentCard key={student.id} student={student} />
           ))}
         </div>
       )}
+
+      {/* Кнопка Load More */}
+      {visibleCount < filteredStudents.length && (
+        <div className={css.loadMoreWrapper}>
+          <button 
+            className={css.loadMoreBtn} 
+            onClick={() => setVisibleCount((prev) => prev + 10)}
+          >
+            Load more students
+          </button>
+        </div>
+      )}
+      
     </div>
   );
 };

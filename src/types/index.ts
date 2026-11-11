@@ -5,7 +5,7 @@ export interface StudentStats {
 }
 
 export interface StudentCardData {
-  id: string; // studentId
+  id: string; 
   fullName: string;
   avatarUrl: string | null;
   language: string;

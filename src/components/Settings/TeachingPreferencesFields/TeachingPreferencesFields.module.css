@@ -65,3 +65,36 @@
   font-family: 'Roboto', sans-serif;
   margin-top: 4px;
 }
+.fullWidthGroup {
+  grid-column: 1 / -1;
+}
+
+.checkboxLabelTitle {
+  margin-bottom: 12px;
+  display: block;
+}
+
+.checkboxGrid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkboxInput {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: none;
+  padding: 12px;
+}

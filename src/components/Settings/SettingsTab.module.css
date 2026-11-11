@@ -1,0 +1,72 @@
+/* SettingsTab.module.css */
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Стили для обертки новых полей (Age, Country, Native Language) */
+.extraFieldsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.extraFieldsContainer label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #8A8A89;
+  margin-top: 8px; /* Небольшой отступ между инпутом и следующим лейблом */
+}
+
+.inputField {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #E8E8E9;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #121417;
+  box-sizing: border-box;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
+  transition: border-color 0.2s ease;
+}
+
+.inputField:focus {
+  border-color: #F4C550;
+}
+
+/* Базовые стили кнопки */
+.saveButton {
+  align-self: flex-start;
+  padding: 16px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 16px;
+  transition: all 0.2s ease;
+}
+
+/* Состояние: Активная кнопка */
+.saveButtonActive {
+  background-color: #F4C550;
+  color: #121417;
+  cursor: pointer;
+}
+
+.saveButtonActive:hover {
+  background-color: #e3b542; /* Легкое затемнение при наведении */
+}
+
+/* Состояние: Кнопка загрузки/сохранения */
+.saveButtonSaving {
+  background-color: #E8E8E9;
+  color: #8A8A89;
+  cursor: not-allowed;
+}

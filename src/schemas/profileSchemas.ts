@@ -26,7 +26,20 @@ export const baseProfileSchema = yup.object({
         message: "Invalid phone format. Only digits, spaces, and a leading '+' are allowed.", 
         excludeEmptyString: true 
       }
-    )
+    ),
+    age: yup
+    .number()
+    .notRequired()
+    .integer("Please enter the total number of years")
+    .positive("Age must be greater than zero"),
+    country : yup
+    .string()
+    .notRequired().
+    min(2, "Country must be at least 2 characters"),
+    nativeLanguage: yup
+    .string()
+    .notRequired().
+    min(2, "Native language must be at least 2 characters")
 });
 
 // 2. Схема для ученика (все настройки обучения опциональны)
@@ -50,8 +63,10 @@ export const teacherProfileSchema = baseProfileSchema.shape({
     .notRequired()
     .positive("Rate must be positive")
     .integer("Rate must be an integer"),
-    
-  // --- НОВОЕ ПОЛЕ: Дополнительные языки ---
+    shortBio: yup
+    .string()
+    .required("Short bio is required").min(100, "Short bio must be at least 100 characters")
+    .min(100, "Short bio must be at least 100 characters"),
   spokenLanguages: yup.array().of(yup.string()).default([]),
 
   // Расписание 

@@ -3,7 +3,13 @@ import css from "./UserInfoCard.module.css";
 import { useAuthStore } from '../../../store/authStore';
 import CameraIcon from "../../../assets/images/camera.svg";
 
-export const UserInfoCard = () => {
+// 1. ДОБАВЛЯЕМ ИНТЕРФЕЙС
+interface UserInfoProps {
+  onEditClick?: () => void;
+}
+
+// 2. ДОБАВЛЯЕМ ТИП И ДОСТАЕМ ПРОПС
+export const UserInfoCard: React.FC<UserInfoProps> = ({ onEditClick }) => {
     const { user, userRole, userData } = useAuthStore();
     
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +79,14 @@ export const UserInfoCard = () => {
                 {actionText} {displayLanguage} • Level: {displayLevel}{displayPrice}
             </div>
             
-            <button type="button" className={css.editBtn}>Edit profile</button>
+            {/* 3. ВЕШАЕМ ФУНКЦИЮ НА КНОПКУ */}
+            <button 
+                type="button" 
+                className={css.editBtn} 
+                onClick={onEditClick}
+            >
+                Edit profile
+            </button>
           </div>
        </div>
     );

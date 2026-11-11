@@ -13,15 +13,48 @@ import type { User } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase/getFirestore';
 
+// 1. СОЗДАЕМ СТРОГИЙ ИНТЕРФЕЙС ДЛЯ ДАННЫХ ПОЛЬЗОВАТЕЛЯ
+export interface UserData {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL?: string | null;
+  role: 'student' | 'teacher';
+  createdAt: string;
+  favorites: string[];
+  stats: {
+    completed_lessons_total: number;
+    completed_lessons_this_month: number;
+    hours_learned_total: number;
+    monthly_hours_goal: number;
+    weekly_streak: number;
+    lessons_balance: number;
+  };
+  
+  // === НОВЫЕ ПОЛЯ ДЛЯ ONBOARDING ===
+  hasCompletedOnboarding: boolean; // Флаг прохождения попапа
+  nativeLanguage?: string;
+  country?: string;
+  age?: string | number; 
+  gender?: 'Male' | 'Female' | 'Other' | string;
+  learningGoals?: string;      // Для студента
+  topicsOfInterest?: string[]; // Для студента
+  shortBio?: string;           // Для учителя
+  contactMethod?: 'Phone' | 'Telegram' | 'WhatsApp';
+  phoneNumber?: string;
+  [key: string]: any; // Оставляем возможность для extraData
+}
+
+// 2.AuthState 
 interface AuthState {
   user: User | null;
   userRole: 'student' | 'teacher' | null;
-  userData: any | null; 
+  userData: UserData | null; 
   googleAccessToken: string | null;
   isLoading: boolean;
   setUser: (user: User | null) => void;
   setGoogleToken: (token: string | null) => void;
-  updateUserData: (newData: any) => void; // Добавлен метод для обновления локальных данных
+  updateUserData: (newData: Partial<UserData>) => void; // Partial означает, что обновлять можно часть полей
   registerWithEmail: (email: string, pass: string, role: 'student' | 'teacher', name: string, extraData?: any) => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   loginWithGoogle: (roleForNewUser?: 'student' | 'teacher') => Promise<void>;
@@ -50,16 +83,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setUser: (user) => set({ user }),
   setGoogleToken: (token) => set({ googleAccessToken: token }),
 
-  // Реализация метода обновления локальных данных
   updateUserData: (newData) => set((state) => ({
-    userData: { ...state.userData, ...newData }
+    userData: state.userData ? { ...state.userData, ...newData } : null
   })),
 
   checkUserRole: async (uid: string) => {
     try {
       const userDoc = await getDoc(doc(db, 'users', uid));
       if (userDoc.exists()) {
-         const data = userDoc.data();
+         const data = userDoc.data() as UserData;
          set({ userRole: data.role, userData: data }); 
       }
     } catch (error) {
@@ -73,12 +105,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     
     await updateProfile(user, { displayName: name });
     
-    const userDataToSave = {
+    const userDataToSave: UserData = {
       uid: user.uid,
       email: user.email,
       displayName: name,
       role: role,
       createdAt: new Date().toISOString(),
+      hasCompletedOnboarding: false, // <-- ПО УМОЛЧАНИЮ FALSE (НОВИЧОК)
       favorites: [],
       stats: {
         completed_lessons_total: 0,
@@ -135,13 +168,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-       const dataToSave = {
+       const dataToSave: UserData = {
          uid: user.uid,
          email: user.email,
          displayName: user.displayName,
          photoURL: user.photoURL,
          role: roleForNewUser,
          createdAt: new Date().toISOString(),
+         hasCompletedOnboarding: false, // <-- ДЛЯ НОВЫХ ПОЛЬЗОВАТЕЛЕЙ GOOGLE
          favorites: [],
          stats: {
            completed_lessons_total: 0,
@@ -155,7 +189,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
        await setDoc(userDocRef, dataToSave);
        set({ user, userRole: roleForNewUser, userData: dataToSave, googleAccessToken: token });
     } else {
-       const data = userDoc.data();
+       const data = userDoc.data() as UserData;
        set({ user, userRole: data.role, userData: data, googleAccessToken: token });
     }
   },
@@ -168,13 +202,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-       const dataToSave = {
+       const dataToSave: UserData = {
          uid: user.uid,
          email: user.email,
          displayName: user.displayName,
          photoURL: user.photoURL,
          role: roleForNewUser,
          createdAt: new Date().toISOString(),
+         hasCompletedOnboarding: false, // <-- ДЛЯ НОВЫХ ПОЛЬЗОВАТЕЛЕЙ FACEBOOK
          favorites: [],
          stats: {
            completed_lessons_total: 0,
@@ -188,7 +223,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
        await setDoc(userDocRef, dataToSave);
        set({ user, userRole: roleForNewUser, userData: dataToSave });
     } else {
-       const data = userDoc.data();
+       const data = userDoc.data() as UserData;
        set({ user, userRole: data.role, userData: data });
     }
   },
@@ -214,12 +249,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     const currentData = get().userData;
-    set({
-      userData: {
-        ...currentData,
-        favorites: [...(currentData.favorites || []), teacherId]
-      }
-    });
+    if (currentData) {
+        set({
+        userData: {
+            ...currentData,
+            favorites: [...(currentData.favorites || []), teacherId]
+        }
+        });
+    }
   },
 
   removeFromFavorites: async (teacherId: string) => {
@@ -231,12 +268,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     const currentData = get().userData;
-    set({
-      userData: {
-        ...currentData,
-        favorites: currentData.favorites.filter((id: string) => id !== teacherId)
-      }
-    });
+    if (currentData) {
+        set({
+        userData: {
+            ...currentData,
+            favorites: currentData.favorites.filter((id: string) => id !== teacherId)
+        }
+        });
+    }
   },
 
   checkIfFavorite: (teacherId: string) => {

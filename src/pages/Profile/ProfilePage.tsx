@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import css from './Profile.module.css';
 import { UserInfoCard } from '../../components/Profile/UserInfoCard/UserInfoCard';
 import { NextLessonBanner } from '../../components/Profile/NextLessonBanner/NextLessonBanner';
@@ -6,8 +7,11 @@ import { ProfileTabs } from '../../components/ProfileTabs/ProfileTabs';
 
 export const ProfilePage = () => {
   // Достаем и user (из Google/FB), и userData (из нашей базы Firebase)
-  const { user, userData } = useAuthStore();
+  const { user, userData, userRole } = useAuthStore();
   
+  // Добавленный стейт для управления вкладками
+  const [activeTab, setActiveTab] = useState(userRole === 'teacher' ? "schedule" : "progress");
+
   // 1. Умное формирование имени:
   // Сначала проверяем, заполнил ли человек имя в Settings. Если нет — берем из Google. Если и там нет — пишем 'User'
   const fullName = (userData?.firstName || userData?.lastName) 
@@ -26,7 +30,7 @@ export const ProfilePage = () => {
       
         <section className={css.topRow}>
           {/* Эта карточка должна тянуть данные внутри себя */}
-          <UserInfoCard />
+          <UserInfoCard onEditClick={() => setActiveTab('settings')} />
 
           <NextLessonBanner
             participantName={fullName}
@@ -38,7 +42,7 @@ export const ProfilePage = () => {
           />
         </section>
         
-        <ProfileTabs />
+         <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ export const TeachingPreferencesFields = () => {
             {errors.language && <span className={css.error}>{errors.language.message as string}</span>}
           </div>
 
-          {/* НОВЫЙ БЛОК: Дополнительные языки (Spoken Languages) */}
+          {/* БЛОК: Дополнительные языки (Spoken Languages) */}
           <div className={css.inputGroup} style={{ gridColumn: "1 / -1" }}>
             <label style={{ marginBottom: '12px', display: 'block' }}>Also speaks (Secondary languages)</label>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -83,6 +83,19 @@ export const TeachingPreferencesFields = () => {
               {...register("hourlyRate")} 
             />
             {errors.hourlyRate && <span className={css.error}>{errors.hourlyRate.message as string}</span>}
+          </div>
+
+          {/* --- НОВОЕ ПОЛЕ ВВОДА: Short bio --- */}
+          
+          <div className={`${css.inputGroup} ${css.fullWidthGroup}`}>
+            <label>Short bio (Introduce yourself to students)</label>
+            <textarea 
+              className={`${css.input} ${css.textarea}`}
+              placeholder="Hi! I am a passionate language teacher..."
+              {...register("shortBio")}
+            />
+         
+            {errors.shortBio && <span className={css.error}>{errors.shortBio.message as string}</span>}
           </div>
 
         </div>

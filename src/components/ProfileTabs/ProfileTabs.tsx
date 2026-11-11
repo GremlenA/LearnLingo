@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react"; // хук useState здесь больше не нужен
 import { useAuthStore } from "../../store/authStore";
 import { useTeacherStore } from "../../store/teacherStore";
-// ИСПРАВЛЕНИЕ 1: Импортируем наш хук для студентов
 import { useTeacherStudents } from "../../hooks/useTeacherStudents"; 
 import css from "./ProfileTabs.module.css";
 import { ProgressTab } from "../ProgressTab/ProgressTab";
@@ -9,19 +8,16 @@ import { ScheduleTab } from '../ScheduleTab/ScheduleTab';
 import { SettingsTab } from "../Settings/SettingsTab";
 import { MyStudentsTab } from '../MyStudents/MyStudentsTab';
 
-export const ProfileTabs = () => {
-  // ИСПРАВЛЕНИЕ 2: Достаем user, чтобы получить его uid
+interface ProfileTabsProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
+
+export const ProfileTabs: React.FC<ProfileTabsProps> = ({ activeTab, setActiveTab }) => {
   const { userData, userRole, user } = useAuthStore();
   const { upcomingLessons, reviews } = useTeacherStore();
-
-  const [activeTab, setActiveTab] = useState(userRole === 'teacher' ? "schedule" : "progress");
-
-  // ИСПРАВЛЕНИЕ 3: Вызываем хук и получаем реальный массив студентов
   const { students } = useTeacherStudents(user?.uid);
-  
-  // ИСПРАВЛЕНИЕ 4: Считаем реальное количество учеников
   const studentsCount = students.length; 
-
   const favoritesCount = userData?.favorites?.length || 0;
   const scheduleCount = upcomingLessons?.length || 0;
   const reviewsCount = reviews?.length || 0;
@@ -35,7 +31,6 @@ export const ProfileTabs = () => {
 
   const teacherTabs = [
     { id: "schedule", label: `📚 My Schedule (${scheduleCount})` },
-    // Теперь здесь выводится живая цифра из базы данных
     { id: "students", label: `👥 My Students (${studentsCount})` }, 
     { id: "reviews", label: `⭐ Reviews (${reviewsCount})` },
     { id: "settings", label: "⚙️ Settings" },
